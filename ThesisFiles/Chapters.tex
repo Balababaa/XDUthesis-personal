@@ -110,20 +110,144 @@
 流式不仅使启动延时成十倍、百倍地缩短，而且不需要太大的缓存容量。
 流式传输避免了用户必须等待整个文件全部从网络上下载才能观看的缺点。
 
+\begin{figure}[ht]
+    \centering
+    \includegraphics[scale=1]{./Figure/IMG_server.pdf}
+    \caption{流式传输示意图}
+    \label{Fig:server}
+\end{figure}
+
+图\ref{Fig:server} 展示了流式传输的工作过程。
+流媒体数据存储区存放着视频、音频等多媒体数据，这些数据经过发送缓冲区，被编码器编码后发送给客户端。
+发送缓冲区和编码器对发送的数据流量进行负反馈调节，防止因为网络拥塞造成卡顿或者数据丢失。
+服务端和客户端之间通过流媒体传输协议交互。客户端收到服务端发送的数据之后，进行解码然后在播放器中播放。
+
 % 在网络上传输音频、视频等多媒体信息，主要有下载和流式传输两种方案。
 % 多媒体文件一般都较大，所以需要的存储容量也较大；
 % 同时由于网络带宽的限制，通过下载实现的多媒体数据传输常常要花数分钟甚至数小时，
 % 所以这种处理方法延迟也很大。
 
 \subsection{基于RTMP的流媒体传输技术}
+% 实时消息传输协议（即Real-Time Messaging Protocol，缩写RTMP） 最初是Macromedia公司为了满足在互联网上传输流媒体音视频而开发的一个私有协议。
+
+% RTMP（Real Time Messaging Protocol） 是由 Adobe 公司基于 Flash Player 播放器对应的音视频 flv 封装格式提出的一种，基于TCP 的数据传输协议。本身具有稳定、兼容性强、高穿透的特点。常被应用于流媒体直播、点播等场景。
+
+% RTMP（Real Time Messaging Protocol） 是由 Adobe 公司基于 Flash Player 播放器对应的音视频 flv 封装格式提出的一种，基于TCP 的数据传输协议。本身具有稳定、兼容性强、高穿透的特点。常被应用于流媒体直播、点播等场景。常用于推推流方（主播）的稳定传输需求
+
+% RTMP，全称 Real Time Messaging Protocol，即实时消息传送协议，
+% 最初是Macromedia公司为了满足在互联网上传输流媒体音视频而开发的一个私有协议。
 实时消息传输协议（即Real-Time Messaging Protocol，缩写RTMP） 最初是Macromedia公司为了满足在互联网上传输流媒体音视频而开发的一个私有协议。
+RTMP是工作在TCP之上的明文协议，默认使用端口1935。
 
-RTMP（Real Time Messaging Protocol） 是由 Adobe 公司基于 Flash Player 播放器对应的音视频 flv 封装格式提出的一种，基于TCP 的数据传输协议。本身具有稳定、兼容性强、高穿透的特点。常被应用于流媒体直播、点播等场景。
+RTMP 协议为了维持稳定连续传递，避免单次传输数据量问题，采用了传输层封包，数据流切片的实现形式。
+被用来对当前带宽进行划分和复用的最小传输单位，被称为 Chunk 即消息块。
 
+\begin{figure}[ht]
+    \centering
+    \includegraphics[scale=.4]{./Figure/IMG_chunk.png}
+    \caption{Chunk 格式示意图}。
+    \label{Fig:chunk}
+\end{figure}
+
+一个完整的数据块包含两个部分：Chunk Header 和 Chunk Data，
+这两者组合在一起，构成了一个有效的消息类型，结构如图\ref{Fig:chunk}所示。
+Chunk Header 由基础数据头（Basic Header）、消息数据头（Message Header）和
+扩展时间戳（Extended Timestamp）构成。
+
+通常情况下，一个有效的消息，如果数据量超出当前 Chunk Size 的话，则会被拆分成多个分块来分批传输。
+默认情况下，Chunk Size 的值为 128字节。
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[scale=1]{./Figure/IMG_rtmp.pdf}
+    \caption{消息拆分示意图}
+    \label{Fig:rtmp}
+\end{figure}
+ 
+协议中的基本数据单元称为消息（Message），传输的过程中消息会被拆分为更小的消息块（Chunk）单元，
+最后将分割后的消息块通过 TCP 协议传输，接收端再反解接收的消息块恢复成流媒体数据。
+图 \ref{Fig:rtmp} 展示了一则当Chunk Size为128字节是的消息拆分发送过程。
+一个大小为 500 字节的 RTMP消息，被拆分为4个大小分别为128字节、128字节、
+128字节、116字节的消息块，最终通过TCP发送出去。
+
+% 通过指定首个 Chunk 和后续 Chunk 类型，以及 Chunk Header 其他标志性数据，来使当前被切割的消息，能够在对端得到有效的还原和执行。我们以 MetaData 类型消息（Data AFM3 16）举例：
+
+RTMP主要有以下几个优点：
+
+\begin{enumerate}
+    \item RTMP 是专门为流媒体开发的协议，对底层的优化比其它协议更加优秀。
+    \item 基本上所有的编码器（摄像头之类）都支持 RTMP 输出，。
+    \item RTMP适合长时间播放，并且具有较低的延时，一般延时在 1-3s 之间。
+\end{enumerate}
+
+RTMP并不是完美的，也有不足之处。
+一方面是它是基于 TCP 传输，没有像HTTP那样的公共端口，被防火墙拦截的可能性也更大；
+另一方面是Adobe并没有完全开源RTMP协议，这就导致很多设备无法需要使用第三方解码器才能播放。
 
 \subsection{基于HTTP-FLV的流媒体传输技术}
+FLV (Flash Video) 是 Adobe 公司推出的另一种视频格式，是一种在网络上传输的流媒体数据存储容器格式。其格式相对简单轻量，不需要很大的媒体头部信息。整个 FLV 由 The FLV Header, The FLV Body 以及其它 Tag 组成。因此加载速度极快。采用 FLV 格式封装的文件后缀为 .flv。
+
+preview
+
+而我们所说的 HTTP-FLV 即将流媒体数据封装成 FLV 格式，然后通过 HTTP 协议传输给客户端。
+
+HTTP-FLV 依靠 MIME 的特性，根据协议中的 Content-Type 来选择相应的程序去处理相应的内容，使得流媒体可以通过 HTTP 传输。相较于 RTMP 协议，HTTP-FLV 能够好的穿透防火墙，它是基于 HTTP/80 传输，有效避免被防火墙拦截。除此之外，它可以通过 HTTP 302 跳转灵活调度/负载均衡，支持使用 HTTPS 加密传输，也能够兼容支持 Android，iOS 的移动端。
+
+说了这么多优点，也来顺便说下 HTTP-FLV 的缺点，由于它的传输特性，会让流媒体资源缓存在本地客户端，在保密性方面不够好。因为网络流量较大，它也不适合做拉流协议。
+
 \subsection{基于HLS的流媒体传输技术}
 
+
+上述两个协议都是有Adobe公司推出的，而下面要讲的 HLS (HTTP Live Streaming) 则是苹果公司基于 HTTP 的流媒体传输协议。主要应用于 iOS 设备，包含(iPhone, iPad, iPod touch) 以及 Mac OSX 提供音视频直播服务和录制内容（点播）等服务。
+
+相对于常见的流媒体协议，HLS 最大的不同在于它并不是一下请求完整的数据流。它会在服务器端将流媒体数据切割成连续的时长较短的 ts 小文件，并通过 M3U8 索引文件按序访问 ts 文件。客户端只要不停的按序播放从服务器获取到的文件，从而实现播放音视频。
+
+相较 RTMP 而言，使用 HLS 在 HTML5 页面上实现播放非常简单：
+
+直接：
+
+preview
+
+或者：
+
+preview
+
+HLS 的优势：
+
+Apple 的全系列产品支持：由于 HLS 是苹果提出的，所以在 Apple 的全系列产品包括 iPhone、 iPad、safari 都不需要安装任何插件就可以原生支持播放 HLS， 现在 Android 也加入了对 HLS 的支持。
+
+穿透防火墙。基于 HTTP/80 传输，有效避免防火墙拦截
+
+性能高。通过 HTTP 传输， 支持网络分发，CDN 支持良好，且自带多码率自适应，Apple 在提出 HLS 时，就已经考虑了码流自适应的问题。
+
+HLS 的劣势：
+
+实时性差，延迟高。HLS 的延迟基本在 10s+ 以上
+
+文件碎片。特性的双刃剑，ts 切片较小，会造成海量小文件，对存储和缓存都有一定的挑战
+
+
+
+\subsection{RTMP、 HTTP-FLV、 HLS简单对比}
+表\ref{Tab:pcompare} 对RTMP、 HTTP-FLV、 HLS这三种协议在底层传输协议、延迟、使用场景等方面进行了对比。
+
+\begin{tabular}{ccccccc}
+    \caption{RTMP、 HTTP-FLV、 HLS对比}
+    \label{Tab:pcompare}\\
+    \toprule
+    协议&底层传输协议&视频封装格式&延迟&数据分段&HTML5&应用场景\\
+    \midrule
+    RTMP&TCP&flv tag&2秒&连续流&不支持&互动直播、点播、在线教育\\
+    HTTP-FLV&HTTP&flv&2秒&连续流&支持&HTML5、互动直播、点播、在线教育\\
+    HLS&HTTP&m3u8&10秒以上&切片&支持&HTML5、互动直播、点播、在线教育\\
+    \bottomrule
+\end{tabular}
+
+RTMP 协议为流媒体而设计，在推流中用的比较多，同时大多 CDN 厂商支持RTMP 协议。
+
+HTTP-FLV 使用类似 RTMP流式的 HTTP 长连接，需由特定流媒体服务器分发的，兼顾两者的优点。以及可以复用现有 HTTP 分发资源的流式协议。它的实时性和 RTMP 相等，与 RTMP 相比又省去了部分协议交互时间，首屏时间更短，可拓展的功能也更多。
+
+HLS 作为苹果提出的直播协议，在 iOS 端占据了不可撼动的地位，Android 端也同时提供相应的支持。
 \section{Spring Boot开发框架}
 \subsection{Spring Boot开发框架简介}
 Spring Boot是由Pivotal团队提供的全新框架，
@@ -178,7 +302,7 @@ Spring容器就可以将通过这种方式声明的被依赖对象从容器中�
 而不是被需要它对象的创建的，所以这个过程就体现了控制反转和依赖注入。
 
 \begin{figure}[ht]
-    \centering
+    \centering   
     \includegraphics[scale=.3]{./Figure/IMG_container.png}
     \caption{IoC和DI工作过程}\label{Fig:erd}
 \end{figure}
