@@ -466,7 +466,7 @@
 \vspace*{\stretch{4}}
 
 \begin{center}
-\begin{tabular}{c C{6.5cm}}
+\begin{tabular}{c C{7cm}}
 \textbf{\zihao{3}\XDU@titlename} & {\heiti\enheiti\zihao{3}\XDU@septitleA}\\
 \cline{2-2}
  & \\
