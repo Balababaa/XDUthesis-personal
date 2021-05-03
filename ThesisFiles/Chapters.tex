@@ -369,13 +369,12 @@ Messaging（消息）
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[scale=.6]{./Figure/IMG_spring.png}
+    \includegraphics[width=0.8\linewidth]{./Figure/IMG_spring.png}
     \caption{Spring框架模块结构}
     \label{Fig:spring}
 \end{figure}
 
 \begin{enumerate}
-    %[label=(\arabic*)]
     \item Core Container 模块是 Spring 框架的基础，提供了控制反转（IoC）和依赖注入（DI）的能力。
     其内部的 BeanFactory 帮助开发者消除了手动创建单例的过程，将单例的创建和组装从业务代码中解耦。
     开发者可以通过ApplicationContext提供的接口访问容器内的创建的对象。
@@ -397,13 +396,14 @@ Spring框架具有控制反转（IOC）特性，它通过对象元数据配置�
 
 控制反转在大多数时候都是通过依赖注入来实现的。当对象A持有了类B的一个实例，就可以说对象A依赖对象B。
 依赖注入要求对象与对象之间的依赖仅仅通过构造函数、工厂方法和属性写入方法来定义。
+
 Spring容器就可以将通过这种方式声明的被依赖对象从容器中找到并且通过构造函数、工厂方法和属性写入方法来注入
 到需要它的对象内。因为这个被依赖对象的创建过程是由容器完成的并在需要它的时候才进行注入，
 而不是被需要它对象的创建的，所以这个过程就体现了控制反转和依赖注入。
 
 \begin{figure}[ht]
     \centering   
-    \includegraphics[scale=.8]{./Figure/IMG_container.pdf}
+    \includegraphics[width=0.8\linewidth]{./Figure/IMG_container.pdf}
     \caption{IoC和DI工作过程}\label{Fig:container}
 \end{figure}
 
@@ -430,13 +430,15 @@ Spring容器就可以将通过这种方式声明的被依赖对象从容器中�
 
 在程序执行的过程中，有若干个切入点，每个切入点都可以成为Aspect的目标。
 
-AOP的最终目标就是在程序运行的某一个时间点，可以执行一段额外的逻辑。图 \ref{Fig:aop} 简单描述了AOP的原理和执行过程。
-在图 \ref{Fig:aop} 中，切面（Aspect）对应的切入点（Join point）为Join point N，切点（Pointcut）的谓词表达式为 pointcut==Join point N
-，而增强（Advice）是在Code N 执行之前输出 before，执行之后输出 after。
+AOP的最终目标就是在程序运行的某一个时间点，可以执行一段额外的逻辑。图 \ref{Fig:aop} 
+简单描述了AOP的原理和执行过程。
+在图 \ref{Fig:aop} 中，切面（Aspect）对应的切入点（Join point）为$Join\ point\ N$，
+切点（Pointcut）的谓词表达式为$ pointcut\ ==\ Join\ point\ N$
+，而增强（Advice）是在$Code\ N$ 执行之前输出 before，执行之后输出 after。
 
 \begin{figure}[ht]
     \centering   
-    \includegraphics[scale=.7]{./Figure/IMG_aop.pdf}
+    \includegraphics[width=0.8\linewidth]{./Figure/IMG_aop.pdf}
     \caption{AOP原理示意图}\label{Fig:aop}
 \end{figure}
 
@@ -462,7 +464,7 @@ AOP的最终目标就是在程序运行的某一个时间点，可以执行一�
 将用户非形式的需求表述转化为完整的需求定义，从而确定系统必须做什么的过程。\cite{demand_analysis}
 
 本节将从功能性需求和非功能性需求两个角度进行阐述，
-前者确定系统需要有什么功能，后者确定系统的扩展性和兼容性。
+前者确定系统需要的功能，后者确定系统的扩展性和兼容性。
 
 \subsection{功能性需求}
 本系统的主要目标是设计并实现一个基于Spring Boot的视频实时监控系统，其核心功能是使用户能够
@@ -470,10 +472,11 @@ AOP的最终目标就是在程序运行的某一个时间点，可以执行一�
 系统引入了一个基于RBAC设计的权限系统，用户可以拥有不同的角色，每个角色可以拥有不同的权限，
 这些权限可以包括功能权限、菜单权限等等。
 
+\newpage
 图 \ref{Fig:case} 是系统用户用例图，体现了系统的大致功能。
 \begin{figure}[ht]
     \centering   
-    \includegraphics[scale=.5]{./Figure/IMG_case.pdf}
+    \includegraphics[width=.7\linewidth]{./Figure/IMG_case.pdf}
     \caption{系统用户用例图}\label{Fig:case}
 \end{figure}
 
@@ -485,7 +488,6 @@ AOP的最终目标就是在程序运行的某一个时间点，可以执行一�
 
 此部分的用例描述如表 \ref{Tab:login} 所示。
 
-\newpage
 \begin{longtable}[ht]{|l|l|}
 \caption{用户登录用例描述}
 \label{Tab:login}\\
@@ -533,7 +535,7 @@ AOP的最终目标就是在程序运行的某一个时间点，可以执行一�
 用户可以进行设备的增加、修改和删除操作。被删除的设备不会从列表中消失，仅仅只是更改“删除状态”。
 
 此部分的用例描述如表 \ref{Tab:device} 所示。
-
+\newpage
 \begin{longtable}[ht]{|l|l|}
     \caption{设备管理用例描述}
     \label{Tab:device}\\
@@ -566,7 +568,6 @@ AOP的最终目标就是在程序运行的某一个时间点，可以执行一�
 视频监控包含录像回放和实时监控。
 用户可以在录像回放下查看所有未被删除和被删除的设备的历史监控视频文件，可以在线播放和下载。
 实时监控可以查看未被删除的设备的实时监控视频。
-
 此部分的用例描述如表 \ref{Tab:video} 所示。
 
 \begin{longtable}[ht]{|l|l|}
@@ -634,6 +635,8 @@ AOP的最终目标就是在程序运行的某一个时间点，可以执行一�
 增加系统角色系统权限，对用户和角色、角色和权限进行关联。
 
 此部分的用例描述如表 \ref{Tab:info} 所示。
+
+\newpage
 \begin{longtable}[ht]{|l|l|}
     \caption{系统设置用例描述}
     \label{Tab:system}\\
@@ -809,8 +812,8 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
 
 
 
-\section{权限系统设计}
-TBD
+% \section{权限系统设计}
+% TBD
 
 
 
@@ -840,6 +843,7 @@ TBD
     \caption{登陆页面}\label{Fig:login}
 \end{figure}
 
+\newpage
 \subsection{实时监控和监控回放播放}
 实时监控的播放和监控回放的播放都是通过 Bilibili的开源组件 flv.js 实现的。
 
@@ -848,25 +852,26 @@ TBD
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.9\linewidth]{./Figure/IMG_record_eg.png}
+    \includegraphics[width=0.8\linewidth]{./Figure/IMG_record_eg.png}
     \caption{实时监控播放示例}\label{Fig:record_eg}
 \end{figure}
 
-系统会对实时的监控视频进行录制，为了保证数据的完整行，录制视频的有效时长为1分钟，多余的部分为冗余数据。
+系统会对实时的监控视频进行录制，为了保证数据的完整性，录制视频的有效时长为1分钟，多余的部分为冗余数据。
 可以在回放文件的列表中对视频进行在线的播放或者下载到本地，如图 \ref{Fig:file_list} 所示。
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.9\linewidth]{./Figure/IMG_file_list.png}
+    \includegraphics[width=0.8\linewidth]{./Figure/IMG_file_list.png}
     \caption{监控回放播放示例}\label{Fig:file_list}
 \end{figure}
 
+\newpage
 \subsection{页面布局}
 页面布局分为三个部分：顶部导航栏、左侧菜单栏和主窗口，如图 \ref{Fig:layout} 所示。
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.9\linewidth]{./Figure/IMG_layout.png}
+    \includegraphics[width=0.8\linewidth]{./Figure/IMG_layout.png}
     \caption{页面布局}\label{Fig:layout}
 \end{figure}
 
@@ -923,7 +928,7 @@ TBD
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.9\linewidth]{./Figure/IMG_eg_main.png}
+    \includegraphics[width=0.6\linewidth]{./Figure/IMG_eg_main.png}
     \caption{一个导航实例}\label{Fig:eg_main}
 \end{figure}
 
@@ -958,7 +963,7 @@ TBD
 本节将介绍后端服务的设计，主要采用Spring Boot 框架设计开发，通过RESTful形式的HTTP 接口与前端交互。
 \subsection{图形验证码接口设计与实现}
 图形验证码的作用是过滤无效的请求非认为请求，防止爬虫。
-图形验证码接口时序图如图\ref{Fig:code_seq}所示。
+图形验证码接口时序图如图 \ref{Fig:code_seq} 所示。
 
 \begin{figure}[ht]
     \centering
@@ -1018,25 +1023,26 @@ TBD
 
 \subsection{文件上传下载设计实现}
 \subsubsection{文件上传}
-文件上传接口用于个人中心修改头像功能，如图 \ref{Fig:file_upload} 所示。
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.9\linewidth]{./Figure/IMG_file_upload.png}
-    \caption{个人中心修改头像}\label{Fig:file_upload}
-\end{figure}
-
+文件上传接口用于个人中心修改头像功能。
+% 如图 \ref{Fig:file_upload} 所示。
 该接口利用Spring Boot 的 MultipartFile 实现，接口地址为/api/file/upload。
 MultipartFile的内容是文件的二进制数据和文件名。在接口收到数据之后，可以通过 
 MultipartFile 获取到文件的二进制数据和文件名，之后调用Java访问文件系统的相关方法，
-将该文件保存在本地的文件系统中。最终返回一个文件的下载地址：
-http://<host>:<port>/api/file/download?filename=\$\{filename\}
+将该文件保存在本地的文件系统中。最终返回一个文件的下载地址。
 
+% http://<host>:<port>/api/file/download?filename=\$\{filename\}
+
+% \newpage
+% \begin{figure}[ht]
+%     \centering
+%     \includegraphics[width=0.5\linewidth]{./Figure/IMG_file_upload.png}
+%     \caption{个人中心修改头像}\label{Fig:file_upload}
+% \end{figure}
 具体的流程图如图 \ref{Fig:seq_upload} 所示。
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.9\linewidth]{./Figure/IMG_seq_upload.pdf}
+    \includegraphics[width=0.8\linewidth]{./Figure/IMG_seq_upload.pdf}
     \caption{文件上传流程图}\label{Fig:seq_upload}
 \end{figure}
 
@@ -1049,9 +1055,9 @@ Character-Encoding，添加Content-Disposition的响应头。
 
 具体的流程图如图 \ref{Fig:seq_download} 所示。
 
-\begin{figure}[ht]
+\begin{figure}[t]
     \centering
-    \includegraphics[width=0.9\linewidth]{./Figure/IMG_seq_download.pdf}
+    \includegraphics[width=0.8\linewidth]{./Figure/IMG_seq_download.pdf}
     \caption{文件下载流程图}\label{Fig:seq_download}
 \end{figure}
 
@@ -1110,6 +1116,7 @@ MySQL&8.0.13\\
 \begin{longtable}[ht]{|l|l|l|l|l|}
     \caption{登陆功能测试用例以及结果}
     \label{Tab:t_login}\\
+    \hline
     序号&用例描述&测试输入&预期结果&结果\\
     \hline
     1&界面测试&1. 打开页面&1. 页面正常展示&通过\\
@@ -1135,6 +1142,7 @@ MySQL&8.0.13\\
     \hline
 \end{longtable}
 
+\newpage
 \subsection{设备列表功能测试}
 用户可以在设备列表中进行以下操作：
 \begin{enumerate}
