@@ -1,23 +1,41 @@
 %!TEX root = ../Demo.tex
 % 中文摘要
 \begin{abstract}
-  % 随着近年来各类智能设备数量的爆发性增长，视频监控系统正朝着数字化、智能化、网络化、人性化的方向发展。
-  % 基于此，本文设计并实现了一个基于Spring Boot的视频实时监控系统。
-  % 本文首先介绍说明了流媒体传输协议的定义，分析比较了RTMP、HTTP-FLV和HLS这三个常用的流媒体传输协议，对三者的原理进行了深入的分析，并讨论了它们在实际使用过程中各自的利弊。
-  % 在这之后介绍了基于Java的Spring Boot开发框架的使用方法，并对其特点、设计理念和功能做了详细的阐述。
+  随着近年来各类智能设备数量的爆发性增长，视频监控系统正朝着数字化、智能化、网络化、人性化的方向发展。
+  基于此，本文设计并实现了一个基于Spring Boot的视频实时监控系统。
+  本文首先介绍了视频监控系统的相关概念、研究现状和发展趋势。
+  然后介绍了流媒体传输技术的有关概念，分析比较了RTMP、HTTP-FLV和HLS这三个常用的流媒体传输协议，
+  对三者的格式和原理进行了的阐述，并讨论了它们在实际使用过程中各自的利弊，最终决定使用 HTTP-FLV 进行系统开发。
+  此外也介绍了基于Java的Spring Boot开发框架的使用方法，并对其特点、设计理念和功能做了细致的阐述。
   % 此外，也介绍了对象拷贝技术MapStruct、基于内存的数据库Redis和基于RBAC的权限系统。
   % 最后对实时监控视频系统的发展趋势作了分析。
-  % 在此次毕业设计的任务中，运用到了Spring Boot、Redis、MapStruct和Vue.js等技术，逐步完成了视频实时监控系统的技术方案设计。
-  % 最终实现了一个基于Spring Boot的视频实时监控系统，具备实时监控视频查看、监控视频保存和检索等功能。
+  最后，本文详细的阐述了本系统的总体设计和实现细节。
+  在此次毕业设计的任务中，运用到了Spring Boot、Redis、MapStruct和Vue.js等技术，逐步完成了视频实时监控系统的技术方案设计。
+  最终实现了一个基于Spring Boot的视频实时监控系统，具备实时监控视频查看、监控视频保存和检索等功能。
 
 \end{abstract}
 \keywords{流媒体传输技术, Spring Boot, HTTP-FLV, 实时视频监控系统}
 
 % 英文摘要
 \begin{enabstract}
-
-  % With the explosive growth in the number of various types of smart devices in recent years, video surveillance systems are developing in the direction of digitization, intelligence, networking, and humanization.
-  % Based on this, this paper designs and implements a real-time video surveillance system based on Spring Boot.
+  With the explosive growth in the number of various types of smart devices in recent years, 
+  video surveillance systems are developing in the direction of digitization, intelligence,
+   networking, and humanization.
+  Based on this, this paper designs and implements a real-time video surveillance system based on Spring Boot.
+  This article first introduces the related concepts, research status and development trend of 
+  the video surveillance system.
+  Then introduced the related concepts of streaming media transmission technology, 
+  analyzed and compared the three commonly used streaming media transmission protocols RTMP, HTTP-FLV and HLS,
+   The format and principle of the three were elaborated, and their respective pros and cons in actual use were discussed.
+    Finally, it was decided to use HTTP-FLV for system development.
+    In addition, the use of the Java-based Spring Boot development framework is introduced, and its characteristics,
+     design concepts and functions are elaborated.
+    Finally, this paper elaborates on the overall design and implementation details of the system.
+  In the task of this graduation project, technologies such as Spring Boot, Redis,
+   MapStruct and Vue.js were used to gradually complete the technical scheme design 
+   of the real-time video surveillance system.
+  Finally, a real-time video monitoring system based on Spring Boot is realized, 
+  with functions such as real-time monitoring video viewing, monitoring video storage and retrieval.
   % This paper first introduces the definition of streaming media transmission protocol, 
   % analyzes and compares the three commonly used streaming media transmission protocols RTMP, HTTP-FLV and HLS, 
   % conducts an in-depth analysis of the principles of the three, 
@@ -25,8 +43,6 @@
   % After that, the article introduces the use of Java-based Spring Boot development framework, and elaborates its characteristics, design concepts and functions in detail.
   % In addition, the object copy technology MapStruct, the memory-based database Redis and the RBAC-based permission system are also introduced.
   % Finally, the development trend of real-time surveillance video system is analyzed.
-  % In the task of this graduation project, technologies such as Spring Boot, Redis, MapStruct and Vue.js were used to gradually complete the technical scheme design of the real-time video surveillance system.
-  % Finally, a real-time video monitoring system based on Spring Boot is realized, with functions such as real-time monitoring video viewing, monitoring video storage and retrieval.
 
 \end{enabstract}
 \enkeywords{streaming media transmission protocol, Spring Boot, HTTP-FLV, real-time video surveillance system}
