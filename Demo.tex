@@ -1,5 +1,5 @@
 %!TEX program = xelatex
-\documentclass[WordOneHalf,adobe]{XDUthesis}   %%启用默认字体设置，word 1.5 倍行距，打印样式
+\documentclass[WordOneHalf,mac]{XDUthesis}   %%启用默认字体设置，word 1.5 倍行距，打印样式
 % 参数设置：
 %     功能设置：
 %         <nologo>: 封面页去除logo（默认有logo）
@@ -48,13 +48,13 @@
 \input{ThesisFiles/Chapters}
 
 % 致谢
-\input{ThesisFiles/Thanks}
+% \input{ThesisFiles/Thanks}
 
 %参考文献
-\phantomsection%生成该页的链接
-\addcontentsline{toc}{chapter}{\bibname}
-\bibliographystyle{gbt7714-unsrt}%不对参考文献排序% gbt7714-plain%对参考文献排序 
-\bibliography{ThesisFiles/RefFile}%在正文中必须引用，才能显示对应的参考文献
+% \phantomsection%生成该页的链接
+% \addcontentsline{toc}{chapter}{\bibname}
+% \bibliographystyle{gbt7714-unsrt}%不对参考文献排序% gbt7714-plain%对参考文献排序 
+% \bibliography{ThesisFiles/RefFile}%在正文中必须引用，才能显示对应的参考文献
 
 % 附录部分
 \appendix
