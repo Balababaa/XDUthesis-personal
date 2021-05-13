@@ -119,7 +119,7 @@ v6协议的摄像头。
 系统主要分为服务器端和网页客户端。
 服务器端主要使用Spring Boot 编写实现，采用 HTTP 协议与网页客户端交互，接口依照 RESTful 风格编写，
 并使用 Java-CV依赖对摄像头视频数据进行采集保存。网页客户端主要使用Vue.js框架编写，主要实现了用户登录、实时监控查看、监控回放查看、增减设备、个人中心、权限管理等功能。
-总的来说，本文的主要工作可以概括为一下几点：
+总的来说，本文的主要工作可以概括为以下几点：
 \begin{enumerate}
     \item 链接安防摄像头，实时查看视频监控。通过安防摄像头厂商提供的 SDK，代码中引入并调用即可，可以对安防摄像头的视频数据进行读取。
     此外也可以直接使用网络摄像头自带的RTMP或者HTTP-FLV协议格式的视频流地址，实现对摄像头视频的查看和录制。
@@ -146,9 +146,10 @@ v6协议的摄像头。
 
 第三章从功能性需求和非功能性需求两方面对系统进行了需求分析，然后介绍了系统的数据库设计和系统架构设计。
 
-第四章介绍了系统的详细设计和实现。分别从前端页面和后端服务两个角度对系统关键功能的设计和实现进行了介绍。
+第四章分别从前端页面和后端服务两个角度对系统关键功能的实现进行了介绍。之后介绍了系统关键功能的测试过程和结果，首先说明了系统的测试环境，然后陈述了系统关键功能的测试用例和结果。
 
-第五章介绍了系统关键功能的测试过程和结果。首先说明了系统的测试环境，然后陈述了系统关键功能的测试用例和结果。
+
+第五章对本文完成的工作进行了总结和归纳，并对监控系统的设计和实现提出了自己的思考。
 
 \chapter{关键技术}
 \section{流媒体传输技术}
@@ -161,17 +162,27 @@ HTTP-FLV 来实现摄像头实时视频的传输和播放。
 \subsection{流媒体以及流式传输}
 \subsubsection{流媒体}
 流媒体 (Streaming Media) 是在网络上将压缩的多媒体数据流进行传输的技术, 然后用户将压缩包进行解压后就能播放数据流\cite{万梅芬2018基于流媒体技术的数字化校园文化设计与实现}。
-它能将一连串的媒体数据（包含音频、视频数据）压缩后并采用流式传输的方式发送，此技术使得数据包得以像流水一样发送；
-如果不使用此技术，就必须在使用前下载整个媒体文件。
-流媒体在播放前不会下载整个文件，只将开始部分存入内存，同时也会在用户访问时对数据包进行缓存，让媒体数据正确地输出，流媒体数据流随时传送随时播放。
+它能将一连串的媒体数据（包含音频、视频数据）压缩后并采用流式传输的方式发送。
+% ，此技术使得数据包得以像流水一样发送；
+如果不使用流媒体，那么就需要在播放音视频等多媒体文件之前下载整个文件。
+% 如果不使用此技术，就必须在使用前下载整个媒体文件。
+相反的，使用流媒体则不需要下载整个文件，数据会向流水一样依次被客户端加载，一边传输一边播放。
+% 流媒体在播放前不会下载整个文件，只将开始部分存入内存，同时也会在用户访问时对数据包进行缓存，让媒体数据正确地输出，
+% 流媒体数据流随时传送随时播放。
 
 \subsubsection{流式传输}
-流式传输是指客户端通过链接流媒体服务器实时传输音频、视频数据，实现“边下载边播放”。流式传输是实现流媒体的关键技术。
-流式传输时，音频、视频等时基媒体由音视频服务器向用户计算机的连续、实时传送，
-用户不必等到整个文件全部下载完毕，而只需经过几秒或十数秒的启动延时即可进行观看。
-当音频、视频等时基媒体在客户机上播放时，文件的剩余部分将在后台从服务器内继续下载。
-流式不仅使启动延时成十倍、百倍地缩短，而且不需要太大的缓存容量。
-流式传输避免了用户必须等待整个文件全部从网络上下载才能观看的缺点。
+流式传输是指客户端通过链接流媒体服务器实时传输音频、视频数据，实现“边下载边播放”。
+想要使用流媒体就离不开流式传输。
+% 流式传输是实现流媒体的关键技术。
+在流式传输中，音视频等多媒体数据通过流媒体服务器向客户端连续地、实时地传输，
+所以只需要经过短暂的加载时间，就可以进行观看。
+% 流式传输时，音频、视频等时基媒体由音视频服务器向用户计算机的连续、实时传送，
+% 用户不必等到整个文件全部下载完毕，而只需经过几秒或十数秒的启动延时即可进行观看。
+当音视频等多媒体在客户端上播放时，剩余的部分仍然会由流媒体服务器继续传输。
+% 当音频、视频等时基媒体在客户机上播放时，文件的剩余部分将在后台从服务器内继续下载。
+流式传输极大的缩短了多媒体文件播放的加载时间。
+% 流式不仅使启动延时成十倍、百倍地缩短，而且不需要太大的缓存容量。
+% 流式传输避免了用户必须等待整个文件全部从网络上下载才能观看的缺点。
 
 \subsubsection{工作过程}
 图 \ref{Fig:server} 展示了流媒体以及流式传输的工作过程。
@@ -201,7 +212,7 @@ HTTP-FLV 来实现摄像头实时视频的传输和播放。
 % RTMP，全称 Real Time Messaging Protocol，即实时消息传送协议，
 % 最初是Macromedia公司为了满足在互联网上传输流媒体音视频而开发的一个私有协议。
 实时消息传输协议（即Real-Time Messaging Protocol，缩写RTMP） 最初是Macromedia公司为了满足在互联网上传输流媒体音视频而开发的一个私有协议。
-RTMP是工作在TCP之上的明文协议，默认使用端口1935。
+RTMP是基于TCP的明文协议，端口的缺省值为1935。
 
 RTMP 协议为了维持稳定连续传递，避免单次传输数据量问题，采用了传输层封包，数据流切片的实现形式。
 被用来对当前带宽进行划分和复用的最小传输单位，被称为 Chunk 即消息块\cite{流媒体：RTMP协议完全解析}。
@@ -213,48 +224,54 @@ Chunk Header 由基础数据头（Basic Header）、消息数据头（Message He
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.8\linewidth]{./Figure/IMG_chunk.pdf}
+    \includegraphics[width=1\linewidth]{./Figure/IMG_chunk.pdf}
     \caption{Chunk 格式示意图}
     \label{Fig:chunk}
 \end{figure}
 
-通常情况下，一个有效的消息，如果数据量超出当前 Chunk Size 的话，则会被拆分成多个分块来分批传输。
+消息（Message）是协议中的基本数据单元，
+消息块（Chunk）是比消息更小的数据单元。
+在数据发送时，消息会被分割为消息块，然后消息块会通过TCP发送出去。
+在数据接收时，消息块会被组装成消息，最终解析成原始的流媒体数据。
+
+通常情况下，一个有效的消息，如果数据量超出 Chunk Size 的话，则会被拆分成多个消息块来分批传输。
 默认情况下，Chunk Size 的值为 128字节。
 
 图 \ref{Fig:rtmp} 展示了一则当Chunk Size为128字节是的消息拆分发送过程。
-协议中的基本数据单元称为消息（Message），传输的过程中消息会被拆分为更小的消息块（Chunk）单元，
-最后将分割后的消息块通过 TCP 协议传输，接收端再反解接收的消息块恢复成流媒体数据。
+% 协议中的基本数据单元称为消息（Message），传输的过程中消息会被拆分为更小的消息块（Chunk）单元，
+% 最后将分割后的消息块通过 TCP 协议传输，接收端再反解接收的消息块恢复成流媒体数据。
 一个大小为 500 字节的 RTMP消息，被拆分为4个大小分别为128字节、128字节、
 128字节、116字节的消息块，最终通过TCP发送出去。
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.8\linewidth]{./Figure/IMG_rtmp.pdf}
+    \includegraphics[width=1\linewidth]{./Figure/IMG_rtmp.pdf}
     \caption{消息拆分示意图}
     \label{Fig:rtmp}
 \end{figure}
 
 % 通过指定首个 Chunk 和后续 Chunk 类型，以及 Chunk Header 其他标志性数据，来使当前被切割的消息，能够在对端得到有效的还原和执行。我们以 MetaData 类型消息（Data AFM3 16）举例：
-\newpage
-RTMP主要有以下几个优点：
-\begin{enumerate}
-    \item RTMP 是专门为流媒体开发的协议，对底层的优化比其它协议更加优秀。
-    \item 基本上所有的编码器（摄像头之类）都支持 RTMP 输出，。
-    \item RTMP适合长时间播放，并且具有较低的延时，一般延时在 1-3s 之间。
-\end{enumerate}
+% \newpage
+% RTMP主要有以下几个优点：
+% \begin{enumerate}
+%     \item RTMP 是专门为流媒体开发的协议，对底层的优化比其它协议更加优秀。
+%     \item 基本上所有的编码器（摄像头之类）都支持 RTMP 输出，。
+%     \item RTMP适合长时间播放，并且具有较低的延时，一般延时在 1-3s 之间。
+% \end{enumerate}
 
-RTMP并不是完美的，也有不足之处。
-一方面是它是基于 TCP 传输，没有像HTTP那样的公共端口，被防火墙拦截的可能性也更大；
-另一方面是Adobe并没有完全开源RTMP协议，这就导致很多设备无法需要使用第三方解码器才能播放。
-
+% RTMP并不是完美的，也有不足之处。
+% 一方面是它是基于 TCP 传输，没有像HTTP那样的公共端口，被防火墙拦截的可能性也更大；
+% 另一方面是Adobe并没有完全开源RTMP协议，这就导致很多设备无法需要使用第三方解码器才能播放。
 \newpage
 \subsection{基于HTTP-FLV的流媒体传输技术}
-HTTP-FLV协议是将流媒体数据封装成 FLV 格式，然后在通过HTTP协议进行传输。
+HTTP-FLV协议
+首先会将流媒体数据按照FLV格式进行封装，然后再使用HTTP传输封装之后的数据。
+% 是将流媒体数据封装成 FLV 格式，然后在通过HTTP协议进行传输。
 
-Flash Video（简称FLV），是一种网络视频格式，用作流媒体格式，
-它的出现有效地解决了视频文件导入Flash后，使导出的SWF文件体积庞大，
-不能在网络上有效使用等缺点\cite{WIKI_FLV}。
-
+FLV是一种适用于流式传输的网络视频格式，全称为Flash Video。
+% Flash Video（简称FLV），是一种网络视频格式，用作流媒体格式，
+% 它的出现有效地解决了视频文件导入Flash后，使导出的SWF文件体积庞大，
+% 不能在网络上有效使用等缺点\cite{WIKI_FLV}。
 FLV 文件格式由FLV Header 和 FlV Body 组成。
 FLV Body 由多个Tag构成，每个Tag 包含 Tag Header 和 Tag Data 组成。
 FLV 协议的格式如图 \ref{Fig:flv} 所示。
@@ -266,6 +283,7 @@ FLV 协议的格式如图 \ref{Fig:flv} 所示。
     \label{Fig:flv}
 \end{figure}
 
+\newpage
 FLV Tag 共有三种类型，分别是Video Tag、Audio Tag和Script Tag，
 通过 Tag Header Data中的第一个字节来区分。
 Video Tag后的Tag Data中存放的是视频相关数据；
@@ -282,13 +300,13 @@ FLV Tag 中的前四个字节用来表示前一个Tag 的长度，即图 \ref{Fi
     \label{Fig:flv_file}
 \end{figure}
 
-HTTP-FLV 是基于HTTP进行数据传输的，可以使用HTTP协议的公共端口80，
-因此可以有效避免出现被防火墙拦截的情况。
-此外，还可以通过Nginx等软件实现负载均衡，减轻服务端的压力，进行流量的灵活调度。
-对于需要数据加密的场景，可以通过HTTPS实现。
-同时它还能很好的支持HTML5，只需要使用 <video> 标签就可以实现在网页中播放HTTP-FLV 视频流。
+% HTTP-FLV 是基于HTTP进行数据传输的，可以使用HTTP协议的公共端口80，
+% 因此可以有效避免出现被防火墙拦截的情况。
+% 此外，还可以通过Nginx等软件实现负载均衡，减轻服务端的压力，进行流量的灵活调度。
+% 对于需要数据加密的场景，可以通过HTTPS实现。
+% 同时它还能很好的支持HTML5，只需要使用 <video> 标签就可以实现在网页中播放HTTP-FLV 视频流。
 
-但是由于它的传输特性，浏览器会缓存部分的流媒体资源在本地客户端，在保密性方面存在问题。
+% 但是由于它的传输特性，浏览器会缓存部分的流媒体资源在本地客户端，在保密性方面存在问题。
 
 %HTTP-FLV 依靠 MIME 的特性，根据协议中的 Content-Type 来选择
 %相应的程序去处理相应的内容，使得流媒体可以通过 HTTP 传输。相较于 RTMP 
@@ -302,7 +320,7 @@ HTTP-FLV 是基于HTTP进行数据传输的，可以使用HTTP协议的公共端
 
 \subsection{基于HLS的流媒体传输技术}
 HLS协议是由苹果公司在2009年提出的基于HTTP的流媒体传输协议，主要应用于PC端和苹果终端，
-可以提供近似实时的流媒体服务，苹果公司在i Phone 3.0中首次尝试了该技术\cite{魏雪飞2020HLS}。
+可以提供近似实时的流媒体服务，苹果公司在iPhone3.0中首次尝试了该技术\cite{魏雪飞2020HLS}。
 
 HLS协议的原理是将输入的是流切分成若干个小的文件，然后通过一个索引文件将它们串联起来。
 播放器需要播放时，会先请求索引文件，再根据索引文件从文件服务器上获对应的音视频等多媒体文件。
@@ -310,7 +328,7 @@ HLS协议的原理是将输入的是流切分成若干个小的文件，然后�
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.8\linewidth]{./Figure/IMG_hls.png}
+    \includegraphics[width=1\linewidth]{./Figure/IMG_hls.png}
     \caption{HLS协议工作原理}
     \label{Fig:hls}
 \end{figure}
@@ -320,9 +338,9 @@ HLS协议的原理是将输入的是流切分成若干个小的文件，然后�
 完成切分操作之后，会产生索引文件和对应的多媒体文件，即图中的index file 和 .ts 文件。
 之后客户端可以通过HTTP请求的方式获取索引文件和多媒体文件进行播放。
 
-HLS也是基于HTTP进行数据传输的，所以同样可以避免被防火墙拦截，支持负载均衡。
-但是由于它需要对输入流进行切分操作，所以会产生较大的延迟，
-同时也会产生海量的小文件，对存储和缓存由一定的要求。
+% HLS也是基于HTTP进行数据传输的，所以同样可以避免被防火墙拦截，支持负载均衡。
+% 但是由于它需要对输入流进行切分操作，所以会产生较大的延迟，
+% 同时也会产生海量的小文件，对存储和缓存由一定的要求。
 
 
 %上述两个协议都是有Adobe公司推出的，而下面要讲的 HLS (HTTP Live Streaming) 则是苹果公司基于 HTTP 的流媒体传输协议。主要应用于 iOS 设备，包含(iPhone, iPad, iPod touch) 以及 Mac OSX 提供音视频直播服务和录制内容（点播）等服务。
@@ -354,24 +372,38 @@ HLS也是基于HTTP进行数据传输的，所以同样可以避免被防火墙�
 % 文件碎片。特性的双刃剑，ts 切片较小，会造成海量小文件，对存储和缓存都有一定的挑战
 
 
-
+\newpage
 \subsection{RTMP、 HTTP-FLV、 HLS简单对比}
 表 \ref{Tab:pcompare} 对RTMP、 HTTP-FLV、 HLS这三种协议在底层传输协议、延迟、使用场景等方面进行了对比。
 
-\begin{table}[ht]
-\centering
+% \begin{table}[ht]
+% \centering
+% \caption{RTMP、 HTTP-FLV、 HLS对比\cite{RTMP、HTTP-FLV、HLS，你了解常见的三大直播协议吗}}
+% \label{Tab:pcompare}
+% \begin{tabular}{cccccc}
+%     \toprule
+%     协议&底层传输协议&视频封装格式&延迟&数据分段&HTML5\\
+%     \midrule
+%     RTMP&TCP&flv tag&2秒&连续流&不支持\\
+%     HTTP-FLV&HTTP&flv&2秒&连续流&支持\\
+%     HLS&HTTP&m3u8&10秒以上&切片&支持\\
+%     \bottomrule
+% \end{tabular}
+% \end{table}
+
+\begin{longtable}[ht]{|c|c|c|c|c|c|}
 \caption{RTMP、 HTTP-FLV、 HLS对比\cite{RTMP、HTTP-FLV、HLS，你了解常见的三大直播协议吗}}
-\label{Tab:pcompare}
-\begin{tabular}{cccccc}
-    \toprule
-    协议&底层传输协议&视频封装格式&延迟&数据分段&HTML5\\
-    \midrule
-    RTMP&TCP&flv tag&2秒&连续流&不支持\\
-    HTTP-FLV&HTTP&flv&2秒&连续流&支持\\
-    HLS&HTTP&m3u8&10秒以上&切片&支持\\
-    \bottomrule
-\end{tabular}
-\end{table}
+\label{Tab:pcompare}\\
+\hline
+协议&底层传输协议&视频封装格式&延迟&数据分段&HTML5\\
+\hline
+RTMP&TCP&flv tag&2秒&连续流&不支持\\
+\hline
+HTTP-FLV&HTTP&flv&2秒&连续流&支持\\
+\hline
+HLS&HTTP&m3u8&10秒以上&切片&支持\\
+\hline
+\end{longtable}
 
 RTMP 是为流媒体设计的，许多设备使用的推流协议都是 RTMP，应用范围比较广，同时拥有较低的延时。
 但是相比于其他两个个协议，它并不HTML5。
@@ -384,14 +416,19 @@ HTTP-FLV 基于 HTTP 的长连接特点进行数据的传输，支持HTML5，具
 
 HLS是苹果公司提出的直播协议，在苹果的生态系统占据着首要地位，不需要安装任何应用就可以实现播放。
 但是与其他两个相比，最致命的缺点就是具有很高的延时。
+
+综上所述，本系统将采用HTTP-FLV协议进行设计和实现。
+
 \section{Spring Boot开发框架}
 \subsection{Spring Boot开发框架简介}
-Spring Boot是由Pivotal团队提供的全新框架，
-其设计目的是用来简化新Spring应用的初始搭建以及开发过程。
-该框架使用了特定的方式来进行配置，从而使开发人员不再需要定义样板化的配置。
+Spring Boot框架由Pivotal团队开发，它通过“自动装配”的方式来进行配置，可以省略XML文件的编写，
+因此极大程度的简化了基于Spring框架的应用的搭建和开发。
+% Spring Boot是由Pivotal团队提供的全新框架，
+% 其设计目的是用来简化新Spring应用的初始搭建以及开发过程。
+% 该框架使用了特定的方式来进行配置，从而使开发人员不再需要定义样板化的配置。
 
 
-Spring Boot不仅继承了Spring框架原有的优秀特性，而且还通过简化配置来进一步简化了Spring应用的整个搭建和开发过程。
+% Spring Boot不仅继承了Spring框架原有的优秀特性，而且还通过简化配置来进一步简化了Spring应用的整个搭建和开发过程。
 在Spring Boot出现之前，使用Spring框架进行应用开发需要编写繁琐的配置文件，然而这些配置文件的内容大多都是类似的。
 
 如图 \ref{Fig:spring} 所示，Spring框架约由20个模块组成，它们被分成
@@ -437,15 +474,15 @@ Spring容器就可以将通过这种方式声明的被依赖对象从容器中�
 到需要它的对象内。因为这个被依赖对象的创建过程是由容器完成的并在需要它的时候才进行注入，
 而不是被需要它对象的创建的，所以这个过程就体现了控制反转和依赖注入。
 
-\begin{figure}[ht]
-    \centering   
-    \includegraphics[width=0.8\linewidth]{./Figure/IMG_container.pdf}
-    \caption{IoC和DI工作过程}\label{Fig:container}
-\end{figure}
-
 在Spring框架的定义中，控制反转又被称为依赖注入。
 如图 \ref{Fig:container} 所示，Spring框架会通过对象元数据配置文件和
 开发者编写的 POJOs（Plain Old Java Objects）来构造Spring容器，进而启动一个完备的系统。
+
+\begin{figure}[ht]
+    \centering   
+    \includegraphics[width=1\linewidth]{./Figure/IMG_container.pdf}
+    \caption{IoC和DI工作过程}\label{Fig:container}
+\end{figure}
 
 \subsection{面向切面编程简介}
 面向切面编程（AOP）可以理解是面向对象编程（OOP）的扩展。
@@ -466,6 +503,7 @@ Spring容器就可以将通过这种方式声明的被依赖对象从容器中�
 
 在程序执行的过程中，有若干个连接点，每个连接点都可以成为Aspect的目标。
 
+\newpage
 AOP的最终目标就是在程序运行的某一个时间点，可以执行一段额外的逻辑。图 \ref{Fig:aop} 
 简单描述了AOP的原理和执行过程。
 在图 \ref{Fig:aop} 中，切面（Aspect）对应的连接点（Join point）为$Join\ point\ N$，
@@ -474,7 +512,7 @@ AOP的最终目标就是在程序运行的某一个时间点，可以执行一�
 
 \begin{figure}[ht]
     \centering   
-    \includegraphics[width=0.8\linewidth]{./Figure/IMG_aop.pdf}
+    \includegraphics[width=1\linewidth]{./Figure/IMG_aop.pdf}
     \caption{AOP原理示意图}\label{Fig:aop}
 \end{figure}
 
@@ -488,18 +526,19 @@ AOP的最终目标就是在程序运行的某一个时间点，可以执行一�
 % TBD
 % \section{RBAC权限系统}
 % TBD
-
 \section{本章小结}
-
+本章介绍了系统设计过程中涉及到的关键技术。
+首先对流媒体传输技术进行了详细介绍，分析比较了RTMP、HTTP-FLV和HLS三个流媒体传输协议。
+紧接着对开发框架Spring Boot的功能和特性进行了介绍。
 \chapter{系统需求分析与总体设计}
 
 \section{需求分析}
 
 %本章将详细阐述系统的总体设计。
 %对毕业设计题目分析调研过后，可以将设计需求拆分为一下五点。
-需求分析也称为软件需求分析、系统需求分析或需求分析工程等，
-是开发人员经过深入细致的调研和分析，准确理解用户和项目的功能、性能、可靠性等具体要求，
-将用户非形式的需求表述转化为完整的需求定义，从而确定系统必须做什么的过程。\cite{demand_analysis}
+% 需求分析也称为软件需求分析、系统需求分析或需求分析工程等，
+% 是开发人员经过深入细致的调研和分析，准确理解用户和项目的功能、性能、可靠性等具体要求，
+% 将用户非形式的需求表述转化为完整的需求定义，从而确定系统必须做什么的过程。\cite{demand_analysis}
 
 本节将从功能性需求和非功能性需求两个角度进行阐述，
 前者确定系统需要的功能，后者确定系统的扩展性和兼容性。
@@ -510,11 +549,10 @@ AOP的最终目标就是在程序运行的某一个时间点，可以执行一�
 系统引入了一个基于RBAC设计的权限系统，用户可以拥有不同的角色，每个角色可以拥有不同的权限，
 这些权限可以包括功能权限、菜单权限等等。
 
-\newpage
 图 \ref{Fig:case} 是系统用户用例图，体现了系统的大致功能。
 \begin{figure}[ht]
     \centering   
-    \includegraphics[width=.7\linewidth]{./Figure/IMG_case.pdf}
+    \includegraphics[width=1\linewidth]{./Figure/IMG_case.pdf}
     \caption{系统用户用例图}\label{Fig:case}
 \end{figure}
 
@@ -566,6 +604,7 @@ AOP的最终目标就是在程序运行的某一个时间点，可以执行一�
 % \end{tabular}
 \end{longtable}
 
+\newpage
 \subsubsection{设备管理}
 
 设备管理部分会展示设备列表，其中包括了当前登陆用户可见的所有设备。
@@ -573,7 +612,7 @@ AOP的最终目标就是在程序运行的某一个时间点，可以执行一�
 用户可以进行设备的增加、修改和删除操作。被删除的设备不会从列表中消失，仅仅只是更改“删除状态”。
 
 此部分的用例描述如表 \ref{Tab:device} 所示。
-\newpage
+
 \begin{longtable}[ht]{|l|l|}
     \caption{设备管理用例描述}
     \label{Tab:device}\\
@@ -602,10 +641,12 @@ AOP的最终目标就是在程序运行的某一个时间点，可以执行一�
 \hline
 \end{longtable}
 
+\newpage
 \subsubsection{视频监控}
 视频监控包含录像回放和实时监控。
 用户可以在录像回放下查看所有未被删除和被删除的设备的历史监控视频文件，可以在线播放和下载。
 实时监控可以查看未被删除的设备的实时监控视频。
+
 此部分的用例描述如表 \ref{Tab:video} 所示。
 
 \begin{longtable}[ht]{|l|l|}
@@ -636,6 +677,7 @@ AOP的最终目标就是在程序运行的某一个时间点，可以执行一�
 \hline
 \end{longtable}
 
+\newpage
 \subsubsection{个人中心}
 个人中心只要包括用户信息的展示和修改。只有用户的头像、密码和昵称支持修改。
 
@@ -668,13 +710,13 @@ AOP的最终目标就是在程序运行的某一个时间点，可以执行一�
 \hline
 \end{longtable}
 
+\newpage
 \subsubsection{系统设置}
 系统设置主要是对权限相关的部分进行操作。具有这部分权限的用户可以对系统用户进行增删改查，
 增加系统角色系统权限，对用户和角色、角色和权限进行关联。
 
-此部分的用例描述如表 \ref{Tab:info} 所示。
+此部分的用例描述如表 \ref{Tab:system} 所示。
 
-\newpage
 \begin{longtable}[ht]{|l|l|}
     \caption{系统设置用例描述}
     \label{Tab:system}\\
@@ -705,6 +747,7 @@ AOP的最终目标就是在程序运行的某一个时间点，可以执行一�
 \hline
 \end{longtable}
 
+\newpage
 \subsection{非功能性需求}
 \subsubsection{兼容性}
 系统基于设备的 HTTP-FLV直播流进行实时监控查看和历史视频查看，
@@ -789,7 +832,7 @@ HTTP请求工具类封装了HTTP请求中相关的GET、POST两种请求方法�
 Spring工具类提供了对Spring上下文的ApplicationContext的静态访问，
 可以在全局状态下任何一个地方访问上下文，即可以访问容器内管理的对象和使用Spring提供的观察者模式。
 
-登陆验证码工具类主要提供在登录时生产验证码图片，如下图所示。
+登陆验证码工具类主要提供在登录时生产验证码图片，如图 \ref{Fig:code} 所示。
 
 \begin{figure}[ht]
     \centering
@@ -854,35 +897,36 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
 % TBD
 
 \section{本章小结}
+本章从功能性需求和非功能性需求两方面对系统进行了需求分析，然后介绍了系统的数据库设计和系统架构设计。
 
-\chapter{系统的详细设计与实现}
-\section{开发环境搭建}
-\subsection{前端开发环境搭建}
+\chapter{系统实现和系统测试}
+本章将将介绍系统实现和系统测试两大部分。
+% \section{开发环境搭建}
+% \subsection{前端开发环境搭建}
 前端使用 Vue.js 框架进行开发，通过 yarn 和 npm 进行项目依赖管理。开发IDE使用 Visual Code。 
+% \subsection{后端开发环境搭建}
+后端使用 Spring Boot 框架进行开发，通过 Maven 进行项目依赖管理。开发IDE使用 IDEA。 
 
-\subsection{后端开发环境搭建}
-前端使用 Spring Boot 框架进行开发，通过 Maven 进行项目依赖管理。开发IDE使用 IDEA。 
-
-\section{前端界面设计与实现}
+\section{前端界面实现}
 本系统采用前后端分离的开发模式，因此前端页面与后端服务是完全独立的。
-本节将介绍前端界面的设计，主要采用 Element-UI开源组件设计。
+本节将介绍前端界面的实现，主要采用 Element-UI开源组件开发。
 
 \subsection{登陆界面}
 
 登陆界面如图 \ref{Fig:login} 所示，分为三个主要部分：信息输入、图形验证码和按钮。
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\linewidth]{./Figure/IMG_login.png}
+    \caption{登陆页面}\label{Fig:login}
+\end{figure}
+
 信息输入部分有三个输入框，分别是用户名输入框、密码输入框、图形验证码输入框和“记住密码”选择框。
 图形验证码部分用于展示图形验证码。
 登陆按钮用于向服务器提交用户名、密码和图形验证码。
 登陆成功之后会跳转到基础管理的设备管理菜单。
 
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.9\linewidth]{./Figure/IMG_login.png}
-    \caption{登陆页面}\label{Fig:login}
-\end{figure}
-
-\newpage
-\subsection{实时监控和监控回放播放}
+\subsection{实时监控播放}
 实时监控的播放和监控回放的播放都是通过 Bilibili的开源组件 flv.js 实现的。
 
 数据库中记录这每一台设备的 HTTP-FLV 视频流地址，前端在获取到这个地址后，通过 flv.js 组件
@@ -890,16 +934,17 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.8\linewidth]{./Figure/IMG_record_eg.png}
+    \includegraphics[width=1\linewidth]{./Figure/IMG_record_eg.png}
     \caption{实时监控播放示例}\label{Fig:record_eg}
 \end{figure}
 
+\subsection{监控回放播放}
 系统会对实时的监控视频进行录制，为了保证数据的完整性，录制视频的有效时长为1分钟，多余的部分为冗余数据。
 可以在回放文件的列表中对视频进行在线的播放或者下载到本地，如图 \ref{Fig:file_list} 所示。
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.8\linewidth]{./Figure/IMG_file_list.png}
+    \includegraphics[width=1\linewidth]{./Figure/IMG_file_list.png}
     \caption{监控回放播放示例}\label{Fig:file_list}
 \end{figure}
 
@@ -909,7 +954,7 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.8\linewidth]{./Figure/IMG_layout.png}
+    \includegraphics[width=1\linewidth]{./Figure/IMG_layout.png}
     \caption{页面布局}\label{Fig:layout}
 \end{figure}
 
@@ -919,7 +964,7 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.9\linewidth]{./Figure/IMG_top.png}
+    \includegraphics[width=1\linewidth]{./Figure/IMG_top.png}
     \caption{顶部导航栏}\label{Fig:top}
 \end{figure}
 
@@ -951,12 +996,13 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
 \subsubsection{主窗口}
 主窗口会根据不同的二级菜单而展示不同的内容，主要用于承载信息、完成操作。
 
+\newpage
 \subsection{二级菜单页面}
 各个二级菜单的页面结构大致相同，如图\ref{Fig:main} 所示，主要分为四部分：导航、搜索、列表、分页。
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.9\linewidth]{./Figure/IMG_main.png}
+    \includegraphics[width=1\linewidth]{./Figure/IMG_main.png}
     \caption{二级菜单页面结构}\label{Fig:main}
 \end{figure}
 
@@ -997,15 +1043,16 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
 当数据过多时，后端会采用分页的方式返回数据，这一部分就是为了配合后端实现分页功能。
 用户可以通过这个部分更改列表展示的数据条数和数据页数。
 
-\section{后端服务设计与实现}
-本节将介绍后端服务的设计，主要采用Spring Boot 框架设计开发，通过RESTful形式的HTTP 接口与前端交互。
-\subsection{图形验证码接口设计与实现}
+\newpage
+\section{后端服务实现}
+本节将介绍后端服务的实现，主要采用Spring Boot 框架开发，通过RESTful形式的HTTP 接口与前端交互。
+\subsection{图形验证码接口}
 图形验证码的作用是过滤无效的请求非认为请求，防止爬虫。
 图形验证码接口时序图如图 \ref{Fig:code_seq} 所示。
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.9\linewidth]{./Figure/IMG_code_seq.pdf}
+    \includegraphics[width=1\linewidth]{./Figure/IMG_code_seq.pdf}
     \caption{图形验证码接口时序图}\label{Fig:code_seq}
 \end{figure}
 
@@ -1028,7 +1075,7 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.9\linewidth]{./Figure/IMG_login_seq.pdf}
+    \includegraphics[width=1\linewidth]{./Figure/IMG_login_seq.pdf}
     \caption{登陆接口时序图}\label{Fig:login_seq}
 \end{figure}
 
@@ -1055,7 +1102,7 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.9\linewidth]{./Figure/IMG_video_save.pdf}
+    \includegraphics[width=1\linewidth]{./Figure/IMG_video_save.pdf}
     \caption{监控视频保存流程图}\label{Fig:video_save}
 \end{figure}
 
@@ -1080,10 +1127,11 @@ MultipartFile 获取到文件的二进制数据和文件名，之后调用Java�
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.7\linewidth]{./Figure/IMG_seq_upload.pdf}
+    \includegraphics[width=1\linewidth]{./Figure/IMG_seq_upload.pdf}
     \caption{文件上传流程图}\label{Fig:seq_upload}
 \end{figure}
 
+\newpage
 \subsubsection{文件下载}
 文件下载接口用于个人头像的现实和视频监控回放文件的播放和下载功能中。
 其接口实现较为简单，首先前端根据参数传递需要下载的文件的文件名，后端
@@ -1095,16 +1143,21 @@ Character-Encoding，添加Content-Disposition的响应头。
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.7\linewidth]{./Figure/IMG_seq_download.pdf}
+    \includegraphics[width=1\linewidth]{./Figure/IMG_seq_download.pdf}
     \caption{文件下载流程图}\label{Fig:seq_download}
 \end{figure}
 
-\section{本章小结}
+\newpage
+\section{系统测试}
+本节的主要工作是对系统进行完成的测试，目的是检验系统设计是否达到需求分析的目标，各个功能是否正常使用。
 
-\chapter{系统测试}
-本章的主要任务是对系统进行完成的测试，目的是检验系统设计是否达到需求分析的目标，各个功能是否正常使用。
 
-\section{测试环境}
+% \newpage
+
+% \chapter{系统测试}
+% 本章的主要任务是对系统进行完成的测试，目的是检验系统设计是否达到需求分析的目标，各个功能是否正常使用。
+
+\subsection{测试环境}
 本系统有摄像头、服务端和客户端三部分组成。
 
 摄像头采用奥尼生产的USB摄像头，分辨率为 1080P，如表 \ref{Tab:cam} 所示。
@@ -1147,43 +1200,101 @@ MySQL&8.0.13\\
 \hline
 \end{longtable}
 
-\section{测试用例及结果}
+\newpage
+\subsection{测试用例及结果}
 测试方式采用黑盒测试，用于检验系统的功能是否正常。本节只介绍了关键功能的测试结果。
-\subsection{登陆功能测试}
-用户首次打开系统时，会进入登陆页面，要求输入用户名、密码和图形验证码。
-对于三个输入参数，只要存在一个不匹配，就会提示错误信息。表 \ref{Tab:login} 列出了部分测试用例以及测试结果。
+
+% \subsubsection{登陆功能测试}
+% 用户首次打开系统时，会进入登陆页面，要求输入用户名、密码和图形验证码。
+% 对于三个输入参数，只要存在一个不匹配，就会提示错误信息。表 \ref{Tab:login} 列出了部分测试用例以及测试结果。
+
+% \begin{longtable}[ht]{|l|l|l|l|l|}
+%     \caption{登陆功能测试用例以及结果}
+%     \label{Tab:t_login}\\
+%     \hline
+%     序号&用例描述&测试输入&预期结果&结果\\
+%     \hline
+%     1&界面测试&1. 打开页面&1. 页面正常展示&通过\\
+%     \hline
+%     \multirow{4}*{2}&\multirow{4}*{正常登陆}&1. 输入正确的用户名密码&&\multirow{4}*{通过}\\
+%     &&2. 输入正确的密码&提示登陆成功&\\
+%     &&3. 输入正确的图形验证码&并跳转到首页&\\
+%     &&4. 点击登陆按钮&&\\
+%     \hline
+%     \multirow{2}*{3}&\multirow{2}*{用户名异常}&1. 不输入用户名&提示用户名&\multirow{2}*{通过}\\
+%     &&2. 输入不存在的用户名&或密码错误&\\
+%     \hline
+%     \multirow{2}*{4}&\multirow{2}*{密码异常}&1. 不输入密码&提示用户名&\multirow{2}*{通过}\\
+%     &&2. 输入错误的密码&或密码错误&\\
+%     \hline
+%     \multirow{2}*{5}&\multirow{2}*{验证码错误}&1. 不输入验证码&\multirow{2}*{提示验证码错误}&\multirow{2}*{通过}\\
+%     &&2. 输入错误的验证码&&\\
+%     \hline
+%     \multirow{4}*{6}&\multirow{4}*{记住密码}&1. 输入正确的用户名、密码&&\multirow{4}*{通过}\\
+%     &&2. 输入正确的图形验证码&自动填充用户名&\\
+%     &&3. 勾选记住密码&和密码&\\
+%     &&4. 登陆后退出&&\\
+%     \hline
+% \end{longtable}
+
+
+\subsubsection{实时监控功能测试}
+用户可以在 “设备中心 > 实时监控 ”菜单下查看实时监控视频。
+对于已经被删除的设备，不支持实时监控查看。
+支持按照设备名称模糊搜索和按照设备类型精确搜索。
+表 \ref{Tab:live_test} 列出了部分测试用例以及测试结果。
 
 \begin{longtable}[ht]{|l|l|l|l|l|}
-    \caption{登陆功能测试用例以及结果}
-    \label{Tab:t_login}\\
+    \caption{实时监控功能测试用例以及结果}
+    \label{Tab:live_test}\\
     \hline
     序号&用例描述&测试输入&预期结果&结果\\
     \hline
-    1&界面测试&1. 打开页面&1. 页面正常展示&通过\\
+    1&界面测试&1. 打开页面&页面正常展示&通过\\
     \hline
-    \multirow{4}*{2}&\multirow{4}*{正常登陆}&1. 输入正确的用户名密码&&\multirow{4}*{通过}\\
-    &&2. 输入正确的密码&提示登陆成功&\\
-    &&3. 输入正确的图形验证码&并跳转到首页&\\
-    &&4. 点击登陆按钮&&\\
+    \multirow{2}*{2}&设备名称&1. 不输入设备名称&列表展示符合&\multirow{2}*{通过}\\
+    &搜索&2.输入设备名称&条件的结果&\\
     \hline
-    \multirow{2}*{3}&\multirow{2}*{用户名异常}&1. 不输入用户名&提示用户名&\multirow{2}*{通过}\\
-    &&2. 输入不存在的用户名&或密码错误&\\
+    \multirow{2}*{3}&设备类型&1. 选择全部&列表展示符合&\multirow{2}*{通过}\\
+    &搜索&2.选择除全部外的选项&条件的结果&\\
+
     \hline
-    \multirow{2}*{4}&\multirow{2}*{密码异常}&1. 不输入密码&提示用户名&\multirow{2}*{通过}\\
-    &&2. 输入错误的密码&或密码错误&\\
+    \multirow{2}*{4}&实时监控&\multirow{2}*{1. 点击查看实时监控视频按钮}&播放实时监控&\multirow{2}*{通过}\\
+    &播放&&&\\
+
+\hline
+\end{longtable}
+
+
+\newpage
+\subsubsection{视频保存和检索功能测试}
+
+用户可以在 “设备中心 > 监控回放 > 回放文件”菜单下查看实时历史的监控视频。
+对于已经被删除的设备，同样也支持查看历史的监控视频。
+用户可以在列表也下选中文件直接进行播放或者下载。
+支持按照视频的起止时间进行范围搜索。
+表 \ref{Tab:replay_test} 列出了部分测试用例以及测试结果。
+
+\begin{longtable}[ht]{|l|l|l|l|l|}
+    \caption{视频保存和检索测试用例以及结果}
+    \label{Tab:replay_test}\\
     \hline
-    \multirow{2}*{5}&\multirow{2}*{验证码错误}&1. 不输入验证码&\multirow{2}*{提示验证码错误}&\multirow{2}*{通过}\\
-    &&2. 输入错误的验证码&&\\
+    序号&用例描述&测试输入&预期结果&结果\\
     \hline
-    \multirow{4}*{6}&\multirow{4}*{记住密码}&1. 输入正确的用户名、密码&&\multirow{4}*{通过}\\
-    &&2. 输入正确的图形验证码&自动填充用户名&\\
-    &&3. 勾选记住密码&和密码&\\
-    &&4. 登陆后退出&&\\
+    1&界面测试&1. 打开页面&页面正常展示&通过\\
     \hline
+    \multirow{2}*{2}&\multirow{2}*{搜索}&1. 选择开始和结束时间&列表展示符合&\multirow{2}*{通过}\\
+    &&2.不选择开始和结束时间&条件的结果&\\
+    \hline
+    3&播放文件&1. 点击播放按钮&文件开始播放&通过\\
+    \hline
+    4&下载文件&1. 点击下载按钮&文件开始下载&通过\\
+
+\hline
 \end{longtable}
 
 \newpage
-\subsection{设备列表功能测试}
+\subsubsection{设备列表功能测试}
 用户可以在设备列表中进行以下操作：
 \begin{enumerate}
     \item 根据设备名称进行模糊搜索
@@ -1223,58 +1334,13 @@ MySQL&8.0.13\\
 \hline
 \end{longtable}
 
-\subsection{实时监控功能测试}
-用户可以在 “设备中心 > 实时监控 ”菜单下查看实时监控视频。
-对于已经被删除的设备，不支持实时监控查看。
-支持按照设备名称模糊搜索和按照设备类型精确搜索。
-表 \ref{Tab:live_test} 列出了部分测试用例以及测试结果。
 
-\begin{longtable}[ht]{|l|l|l|l|l|}
-    \caption{实时监控功能测试用例以及结果}
-    \label{Tab:live_test}\\
-    \hline
-    序号&用例描述&测试输入&预期结果&结果\\
-    \hline
-    1&界面测试&1. 打开页面&页面正常展示&通过\\
-    \hline
-    \multirow{2}*{2}&设备名称&1. 不输入设备名称&列表展示符合&\multirow{2}*{通过}\\
-    &搜索&2.输入设备名称&条件的结果&\\
-    \hline
-    \multirow{2}*{3}&设备类型&1. 选择全部&列表展示符合&\multirow{2}*{通过}\\
-    &搜索&2.选择除全部外的选项&条件的结果&\\
 
-    \hline
-    \multirow{2}*{4}&实时监控&\multirow{2}*{1. 点击查看实时监控视频按钮}&播放实时监控&\multirow{2}*{通过}\\
-    &播放&&&\\
 
-\hline
-\end{longtable}
+\section{本章小结}
+本章分别从前端页面和后端服务两个角度对系统关键功能的实现进行了介绍。
+之后介绍了系统关键功能的测试过程和结果，首先说明了系统的测试环境，然后陈述了系统关键功能的测试用例和结果。
 
-\subsection{视频保存和检索功能测试}
-
-用户可以在 “设备中心 > 监控回放 > 回放文件”菜单下查看实时历史的监控视频。
-对于已经被删除的设备，同样也支持查看历史的监控视频。
-用户可以在列表也下选中文件直接进行播放或者下载。
-支持按照视频的起止时间进行范围搜索。
-表 \ref{Tab:replay_test} 列出了部分测试用例以及测试结果。
-
-\begin{longtable}[ht]{|l|l|l|l|l|}
-    \caption{视频保存和检索测试用例以及结果}
-    \label{Tab:replay_test}\\
-    \hline
-    序号&用例描述&测试输入&预期结果&结果\\
-    \hline
-    1&界面测试&1. 打开页面&页面正常展示&通过\\
-    \hline
-    \multirow{2}*{2}&\multirow{2}*{搜索}&1. 选择开始和结束时间&列表展示符合&\multirow{2}*{通过}\\
-    &&2.不选择开始和结束时间&条件的结果&\\
-    \hline
-    3&播放文件&1. 点击播放按钮&文件开始播放&通过\\
-    \hline
-    4&下载文件&1. 点击下载按钮&文件开始下载&通过\\
-
-\hline
-\end{longtable}
 
 \chapter{总结与展望}
 \section{总结}
@@ -1294,3 +1360,4 @@ MySQL&8.0.13\\
 但是对于自身带有存储的摄像头，可以直接通过厂商的SDK访问它的本地系统来进行回放文件的读取，无需再遍历。
 
 \section{本章小结}
+本章对本文完成的工作进行了总结和归纳，并对监控系统的设计和实现提出了自己的思考。
