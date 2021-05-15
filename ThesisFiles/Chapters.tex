@@ -659,119 +659,312 @@ parent属性的值可以与目标bean的id属性或目标bean的name属性中的
     \includegraphics[width=1\linewidth]{./Figure/IMG_code_39.png}
 \end{figure}
 
-\chapter{Spring中的面向切面编程}
-面向切面编程是面向对象编程的补充，它提出了另一种对程序结构的思考方式。
-在OOP中，最重要的模块是类，而在AOP中，最重要的模块是\textit{切面}。
-切面使程序的关注点模块化，例如可以通过AOP实现跨多种类型和对象的事务管理
-（这类关注点在关于AOP的文献中通常被称为横切关注点）。
+\newpage
+\subsection{内部Bean}
+<property />或<constructor-arg />元素内的<bean />元素定义了一个内部bean，如以下示例所示：
 
-AOP 框架是Spring中最重要的组件之一。
-AOP组件并不和Spring的IoC 容器强绑定，你可以在不引入AOP的情况下使用容器。
-AOP为 Sping的IoC提供一种非常强大的中间件解决方案。
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{./Figure/IMG_code_40.png}
+\end{figure}
 
-在Spring框架中，AOP常被用于：
+内部bean定义不需要定义的ID或名称。
+如果指定，则容器不使用该值作为标识符。
+容器在创建时也将忽略作用域标志，
+因为内部Bean始终是匿名的，并且始终与外部Bean一起创建。
+不可能独立访问内部bean或将它们注入到其他协作的bean中。
 
-\begin{itemize}
-    \item 提供声明式的企业服务，最重要的此类服务是声明式事务。
-    \item 允许开发者实现自定义的切面来使用AOP扩展OOP。
-\end{itemize}
+作为一个极端的例子，可以从自定义范围接收破坏回调，
+例如，针对单例bean中包含的请求范围内的bean。 
+内部bean实例的创建与其包含的bean绑定在一起，
+但是销毁回调使它可以参与请求范围的生命周期。 
+这不是常见的情况。 内部bean通常只共享其包含bean的作用域。
 
-\section{AOP中的概念}
-首先介绍一下在AOP中的一些主要概念和术语。
-这些概念和术语并不是Spring定义的，不过它们含义并不是很特别直观。
-如果由Spring使用自己的概念和术语，可能反而会令开发者更加困惑。
+\newpage
+\subsection{集合}
+<list />，<set />，<map />和<props />元素分别对应Java集合类型的
+List，Set，Map和Properties。 以下示例显示了如何使用它们：
 
-\begin{itemize}
-    \item 切面：可以涉及不同类的模块化关注点。 事物管理是
-    企业Java应用程序中横切关注点的一个很好的例子。 在Spring AOP中，切面
-    使用常规类（基于配置声明的方式）或@Aspect带注释的常规类实现
-    （基于@AspectJ的方式）。
-    \item 连接点：程序执行过程中的某一时刻，例如方法执行或异常处理。
-     在Spring AOP中，连接点始终是方法执行。
-    \item 增强：切面在某个连接点执行的操作，有前置、后置、环绕等增强方式（下文介绍）。
-    在包括Spring在内的众多AOP框架中，
-    都会将增强实现为一个拦截器，然后将多个拦截器组装成一个作用于连接点的拦截器链。
-    \item 切点：是一个谓词表达式，用来计算是否匹配连接点。
-    增强与切点表达式相关联
-    并切会在匹配切点表达式的连接点上执行（例如，指定匹配特定名称的方法）。
-    被切入点表达式匹配的连接点是AOP的核心概念。
-    默认情况下，Spring使用AspectJ切点表达语言。
-    \item 引入：在个对象中声明额外的方法或字段。
-    Spring AOP允许开发者向被增强的对象引入新的接口以及对应的实现。
-    例如，开发者可以使用引入来使Bean实现IsModified接口，以简化缓存。
-    （在AspectJ社区中，引入也被称为跨类型声明）
-    \item 目标对象：被一个或多个切面增强的对象，即“被增强对象”。
-    由于Spring AOP是使用运行时代理实现的，因此对象始终是被代理对象。
-    \item AOP 代理：AOP框架为了实现切面（增强方法执行等）而创建的对象。在Spring框架中，一个AOP 代理对象要么是JDK动态代理创建的，要么是GCLIB创建的。
-    \item 织入：将切面与其他类型或对象链接以创建一个被增强对象的过程。织入可以在编译时（使用AspectJ 编译器）、加载时和运行时执行。
-    像其他纯Java实现的AOP框架一样，Spring AOP 在运行时完成织入。
-\end{itemize}
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{./Figure/IMG_code_41.png}
+\end{figure}
 
-增强的种类：
+Map 的 键和值、Set的值可以是一下几种之一：
 
-\begin{itemize}
-    \item 前置增强：在连接点之前执行增强，但是并不能阻碍连接点之后的程序执行，除非在增加执行的过程中抛出异常。
-    \item 返回后增强：在连接点正常执行完成之后执行增强，比如，一个方法正常执行完成而且没有抛出异常。
-    \item 抛异常后增强：在连接点执行抛出异常之后执行增强。
-    \item 后置增强：不论连接点是否正常执行完成，都会在之后执行增强。
-    \item 环绕增强：环绕连接点（例如方法执行）执行的增强，是最强大的增强类型。
-    环绕增强可以在方法执行之前和执行完成之后执行定制化的逻辑。因此它还能控制是否继续执行连接点之后的代码，
-    可以选择抛出异常、返回连接点的执行结果或者返回增强自己的结果。
-\end{itemize}
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{./Figure/IMG_code_42.png}
+\end{figure}
 
-环绕增强建议是最通用的增强。
-Spring AOP与AspectJ一样，提供了各种增强类型，
-因此我们建议开发者使用功能最弱的建议类型来实现所需的额外操作。
-例如，如果只需要用方法的返回值来更新缓存，
-则最好使用返回后增强而不是环绕增强，尽管环绕增强可以完成相同的事情。
-使用最合适的增强类型可以使编程模型更简单，并减少出错的可能性。
-例如，开发者不需要在环绕增强的JoinPoint上调用proceeed()方法，所以也不会导致调用失败。
+\subsubsection{集合合并}
+Spring容器还支持合并集合。应用程序开发人员可以定义父<list/>、<map/>、<set/>或<props/>元素，并让子<list/>、<map/>、<set/>或<props/>元素继承和重写父集合中的值。也就是说，子集合的值是合并父集合和子集合的元素的结果，子集合的元素将覆盖父集合中指定的值。
 
-所有增强的参数都是静态类型的，
-因此开发者可以使用参数的确切类型（例如，方法返回的值的类型）而不是对象数组类型。
+这部分关于合并的内容会涉及到父子bean机制。
+不熟悉父bean和子bean定义的读者可能希望在继续之前阅读相关部分。
 
-匹配切点的连接点是AOP的关键概念，它与仅提供拦截功能的旧技术有所不同。
-切点使增强独立于面向对象的层次结构中。
-例如，开发者可以将提供声明性事务管理的环绕增强应用于多个对象（例如服务层中的所有业务操作）的一组方法。
+以下示例演示集合合并：
 
-\section{Spring AOP能力和目标}
-Spring AOP是用纯Java实现的。 不需要特殊的编译过程。 
-Spring AOP不需要控制类加载器的层次结构，因此适合在Servlet容器或应用程序服务器中使用。
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{./Figure/IMG_code_43.png}
+\end{figure}
 
-Spring AOP当前仅支持方法执行连接点（增强在Spring Bean上执行方法）。
-尽管可以在不破坏核心Spring AOP API的基础上添加对字段侦听的支持，但是目前暂未实现。
-如果需要增强字段的访问和更新的连接点，可以考虑使用诸如AspectJ之类的语言。
+注意，在子bean定义的adminEmails属性的<props/>元素上使用了merge=true属性。当容器解析并实例化子bean时，生成的实例具有一个adminEmails属性集合，该集合包含将子级的adminEmails集合与父级的adminEmails集合合并的结果。下面的列表显示了结果：
 
-Spring AOP的实现方法不同于大多数其他AOP框架。 
-其目的不是提供最完整的AOP实现（尽管Spring AOP相当强大），
-而是在AOP实现和Spring IoC之间提供紧密的集成，以帮助解决企业应用程序中的常见问题。
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{./Figure/IMG_code_44.png}
+\end{figure}
 
-因此，通常将Spring 框架的AOP功能与IoC容器结合使用。
-通过使用常规bean定义语法来配置切面（强大的“自动代理”功能）。
-这是与其他AOP实现的关键区别。
-使用Spring AOP有时候无法轻松或高效地完成某些事情，例如增强非常细粒度的对象（通常是域对象）。
-在这种情况下，AspectJ是最佳选择。
-但是，大部分情况下，Spring AOP为
-AOP可以解决的企业Java应用程序中的大多数问题
-提供了出色的解决方案。
 
-Spring AOP从未在提供全面的AOP解决方案上与AspectJ竞争。
- 我们认为，基于代理的框架（例如Spring AOP）和成熟的框架（例如AspectJ）都是有价值的，
- 并且它们是互补的，而不是竞争。 
- Spring无缝地将Spring AOP和IoC与AspectJ集成在一起，
- 使得在基于Spring的一致应用程序架构中支持AOP的所有使用。
-  这种集成不会影响Spring AOP API或AOP Alliance API。
-   Spring AOP保持向后兼容。 有关Spring AOP API的讨论，请参见下一章。
+子Bean拥有所有父Bean在<props/> 中定义的元素，同时子Bean的<props/>中的元素会覆盖父Bean的值。
 
-\section{AOP代理}
-Spring AOP默认使用标准JDK动态代理实现AOP代理，因此可以代理任何接口（或一组接口）。
+此合并行为类似地适用于<list/>、<map/>和<set/>集合类型。
+在<list/>元素的特定情况下，与列表集合类型相关联的语义会被（即，值的有序集合的概念）得到维护。
+父列表的值在所有子列表的值之前。
+对于Map、Set和Properties集合类型，不存在排序。
+因此，对于容器内部使用的关联Map、Set和Properties实现类型下面的集合类型，没有有效的排序语义。
 
-Spring AOP也可以使用CGLIB代理。 
-在需要对类进行代理的情况下，基于CGLIB的代理是必须的。 
-默认情况下，如果业务对象未实现接口，则使用CGLIB。 
-面向接口编程是行业规范，因此业务类通常实现一个或多个业务接口。 
-当需要增强未在接口上声明的方法或需要将代理对象作为具体类型传递给方法的情况下（在极少数情况下），
-可以强制使用CGLIB。
+\subsubsection{集合合并的局限性}
+不能合并不同的集合类型（如Map和List），这样会引发相应的异常。
+必须在子定义上指定merge属性，在父集合定义上指定merge属性是无效的，不会导致所需的合并。
 
-掌握Spring AOP是基于代理实现的这一事实是非常重要。 
-要了解具体实现细节，请参阅了解AOP代理。
+\subsubsection{强类型集合}
+
+随着Java5中泛型类型的引入，您可以使用强类型集合。
+也就是说，可以声明一个集合类型，使得它只能包含（例如）字符串元素。
+如果使用Spring依赖关系将强类型集合注入bean，
+则可以利用Spring的类型转换，
+以便在将强类型集合实例的元素添加到集合之前将其转换为适当的类型。
+下面的Java类和bean定义演示了如何执行此操作：
+
+\newpage
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{./Figure/IMG_code_45.png}
+\end{figure}
+
+当something bean的accounts属性准备好注入时，
+关于强类型Map<String，Float>的元素类型的泛型信息可以通过反射获得。
+因此，Spring的类型转换将各种值元素识别为Float类型，
+字符串值（9.99、2.75和3.99）被转换为实际的Float类型。
+
+\subsection{Null和空字符串值}
+Spring将属性等的空参数视为空字符串。以下基于XML的配置元数据片段将电子邮件属性设置为空字符串值（“”）。
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{./Figure/IMG_code_46.png}
+\end{figure}
+
+\newpage
+前面的示例等效于以下Java代码：
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{./Figure/IMG_code_47.png}
+\end{figure}
+
+<null />元素代表空值。 如下代码所示：
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{./Figure/IMG_code_48.png}
+\end{figure}
+
+
+前面的示例等效于以下Java代码：
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{./Figure/IMG_code_49.png}
+\end{figure}
+
+\subsection{p-namespace的XML快捷配置}
+使用p-namespace，就可以使用<bean/>标签的元素来描述
+bena的属性值（而不是嵌套的<property />元素）。
+
+Spring支持带有名称空间的可扩展配置格式，这些名称空间基于XML Schema定义。 本章讨论的bean配置格式是在XML Schema文档中定义的。 但是，p命名空间未在XSD文件中定义，仅存在于Spring的核心中。
+
+\newpage
+下面的示例显示了两个XML代码段（第一个使用标准XML格式，第二个使用p-命名空间），它们可以解析为相同的结果：
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{./Figure/IMG_code_50.png}
+\end{figure}
+
+该示例显示了使用p命名空间
+配置了bean 定义的email属性。
+如前所述，p命名
+空间没有架构定义，因此可以将属性名称写在“p” 之后。
+
+下一个示例包括另外两个bean定义，它们都引用了另一个bean：
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{./Figure/IMG_code_51.png}
+\end{figure}
+
+此示例不仅包括使用p-namespace的属性值，而且还使用特殊格式来声明属性引用。 
+第一个bean定义使用<property name =“ spouse” ref =“ jane” />创建从bea
+n john到bean jane的引用，而第二个bean定义使用p：spouse-ref =“ jane”作为
+属性来配置，其实作用想用。 在这种情况下，spouse是属性名称，而-ref部分指示这不是
+一个直接值，而是对另一个bean的引用。
+
+\subsection{c-namespace的XML快捷配置}
+
+与带有p-namespace的XML快捷方式类似，spring3.1中引入的c-namespace允许内联属性来配置构造函数参数，而不是嵌套的constructorarg元素。
+
+下面的示例使用c:命名空间执行与基于构造函数的依赖项注入相同的操作：
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{./Figure/IMG_code_52.png}
+\end{figure}
+
+c:namespace使用与p命名空间
+相同的约定来按名称设置构造函数参数。
+类似地，它需要在XML文件中声明，因为它没有在XSD模式中定义（它仅存在于Spring内核中）。
+
+
+对于构造函数参数名称不可用的罕见情况（通常是在编译字节码时没有调试信息），可以使用回退到参数索引，如下所示：
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{./Figure/IMG_code_53.png}
+\end{figure}
+
+实际上，构造函数解析机制在匹配参数方面非常有效，因此除非您真的需要，否则我们建议在整个配置中使用名称表示法。
+
+\subsection{复合属性名}
+设置bean属性时，可以使用复合或嵌套属性名，只要路径中除最终属性名以外的所有部分都不为null。考虑以下bean定义：
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{./Figure/IMG_code_54.png}
+\end{figure}
+
+something bean有一个fred属性，
+fred有一个bob属性，
+bob有一个sammy属性，最后sammy属性的值被设置为123。
+在构造bean之后，something的fred属性和fred的bob属性不能为null，否则将抛出NullPointerException。
+
+
+% \chapter{Spring中的面向切面编程}
+% 面向切面编程是面向对象编程的补充，它提出了另一种对程序结构的思考方式。
+% 在OOP中，最重要的模块是类，而在AOP中，最重要的模块是\textit{切面}。
+% 切面使程序的关注点模块化，例如可以通过AOP实现跨多种类型和对象的事务管理
+% （这类关注点在关于AOP的文献中通常被称为横切关注点）。
+
+% AOP 框架是Spring中最重要的组件之一。
+% AOP组件并不和Spring的IoC 容器强绑定，你可以在不引入AOP的情况下使用容器。
+% AOP为 Sping的IoC提供一种非常强大的中间件解决方案。
+
+% 在Spring框架中，AOP常被用于：
+
+% \begin{itemize}
+%     \item 提供声明式的企业服务，最重要的此类服务是声明式事务。
+%     \item 允许开发者实现自定义的切面来使用AOP扩展OOP。
+% \end{itemize}
+
+% \section{AOP中的概念}
+% 首先介绍一下在AOP中的一些主要概念和术语。
+% 这些概念和术语并不是Spring定义的，不过它们含义并不是很特别直观。
+% 如果由Spring使用自己的概念和术语，可能反而会令开发者更加困惑。
+
+% \begin{itemize}
+%     \item 切面：可以涉及不同类的模块化关注点。 事物管理是
+%     企业Java应用程序中横切关注点的一个很好的例子。 在Spring AOP中，切面
+%     使用常规类（基于配置声明的方式）或@Aspect带注释的常规类实现
+%     （基于@AspectJ的方式）。
+%     \item 连接点：程序执行过程中的某一时刻，例如方法执行或异常处理。
+%      在Spring AOP中，连接点始终是方法执行。
+%     \item 增强：切面在某个连接点执行的操作，有前置、后置、环绕等增强方式（下文介绍）。
+%     在包括Spring在内的众多AOP框架中，
+%     都会将增强实现为一个拦截器，然后将多个拦截器组装成一个作用于连接点的拦截器链。
+%     \item 切点：是一个谓词表达式，用来计算是否匹配连接点。
+%     增强与切点表达式相关联
+%     并切会在匹配切点表达式的连接点上执行（例如，指定匹配特定名称的方法）。
+%     被切入点表达式匹配的连接点是AOP的核心概念。
+%     默认情况下，Spring使用AspectJ切点表达语言。
+%     \item 引入：在个对象中声明额外的方法或字段。
+%     Spring AOP允许开发者向被增强的对象引入新的接口以及对应的实现。
+%     例如，开发者可以使用引入来使Bean实现IsModified接口，以简化缓存。
+%     （在AspectJ社区中，引入也被称为跨类型声明）
+%     \item 目标对象：被一个或多个切面增强的对象，即“被增强对象”。
+%     由于Spring AOP是使用运行时代理实现的，因此对象始终是被代理对象。
+%     \item AOP 代理：AOP框架为了实现切面（增强方法执行等）而创建的对象。在Spring框架中，一个AOP 代理对象要么是JDK动态代理创建的，要么是GCLIB创建的。
+%     \item 织入：将切面与其他类型或对象链接以创建一个被增强对象的过程。织入可以在编译时（使用AspectJ 编译器）、加载时和运行时执行。
+%     像其他纯Java实现的AOP框架一样，Spring AOP 在运行时完成织入。
+% \end{itemize}
+
+% 增强的种类：
+
+% \begin{itemize}
+%     \item 前置增强：在连接点之前执行增强，但是并不能阻碍连接点之后的程序执行，除非在增加执行的过程中抛出异常。
+%     \item 返回后增强：在连接点正常执行完成之后执行增强，比如，一个方法正常执行完成而且没有抛出异常。
+%     \item 抛异常后增强：在连接点执行抛出异常之后执行增强。
+%     \item 后置增强：不论连接点是否正常执行完成，都会在之后执行增强。
+%     \item 环绕增强：环绕连接点（例如方法执行）执行的增强，是最强大的增强类型。
+%     环绕增强可以在方法执行之前和执行完成之后执行定制化的逻辑。因此它还能控制是否继续执行连接点之后的代码，
+%     可以选择抛出异常、返回连接点的执行结果或者返回增强自己的结果。
+% \end{itemize}
+
+% 环绕增强建议是最通用的增强。
+% Spring AOP与AspectJ一样，提供了各种增强类型，
+% 因此我们建议开发者使用功能最弱的建议类型来实现所需的额外操作。
+% 例如，如果只需要用方法的返回值来更新缓存，
+% 则最好使用返回后增强而不是环绕增强，尽管环绕增强可以完成相同的事情。
+% 使用最合适的增强类型可以使编程模型更简单，并减少出错的可能性。
+% 例如，开发者不需要在环绕增强的JoinPoint上调用proceeed()方法，所以也不会导致调用失败。
+
+% 所有增强的参数都是静态类型的，
+% 因此开发者可以使用参数的确切类型（例如，方法返回的值的类型）而不是对象数组类型。
+
+% 匹配切点的连接点是AOP的关键概念，它与仅提供拦截功能的旧技术有所不同。
+% 切点使增强独立于面向对象的层次结构中。
+% 例如，开发者可以将提供声明性事务管理的环绕增强应用于多个对象（例如服务层中的所有业务操作）的一组方法。
+
+% \section{Spring AOP能力和目标}
+% Spring AOP是用纯Java实现的。 不需要特殊的编译过程。 
+% Spring AOP不需要控制类加载器的层次结构，因此适合在Servlet容器或应用程序服务器中使用。
+
+% Spring AOP当前仅支持方法执行连接点（增强在Spring Bean上执行方法）。
+% 尽管可以在不破坏核心Spring AOP API的基础上添加对字段侦听的支持，但是目前暂未实现。
+% 如果需要增强字段的访问和更新的连接点，可以考虑使用诸如AspectJ之类的语言。
+
+% Spring AOP的实现方法不同于大多数其他AOP框架。 
+% 其目的不是提供最完整的AOP实现（尽管Spring AOP相当强大），
+% 而是在AOP实现和Spring IoC之间提供紧密的集成，以帮助解决企业应用程序中的常见问题。
+
+% 因此，通常将Spring 框架的AOP功能与IoC容器结合使用。
+% 通过使用常规bean定义语法来配置切面（强大的“自动代理”功能）。
+% 这是与其他AOP实现的关键区别。
+% 使用Spring AOP有时候无法轻松或高效地完成某些事情，例如增强非常细粒度的对象（通常是域对象）。
+% 在这种情况下，AspectJ是最佳选择。
+% 但是，大部分情况下，Spring AOP为
+% AOP可以解决的企业Java应用程序中的大多数问题
+% 提供了出色的解决方案。
+
+% Spring AOP从未在提供全面的AOP解决方案上与AspectJ竞争。
+%  我们认为，基于代理的框架（例如Spring AOP）和成熟的框架（例如AspectJ）都是有价值的，
+%  并且它们是互补的，而不是竞争。 
+%  Spring无缝地将Spring AOP和IoC与AspectJ集成在一起，
+%  使得在基于Spring的一致应用程序架构中支持AOP的所有使用。
+%   这种集成不会影响Spring AOP API或AOP Alliance API。
+%    Spring AOP保持向后兼容。 有关Spring AOP API的讨论，请参见下一章。
+
+% \section{AOP代理}
+% Spring AOP默认使用标准JDK动态代理实现AOP代理，因此可以代理任何接口（或一组接口）。
+
+% Spring AOP也可以使用CGLIB代理。 
+% 在需要对类进行代理的情况下，基于CGLIB的代理是必须的。 
+% 默认情况下，如果业务对象未实现接口，则使用CGLIB。 
+% 面向接口编程是行业规范，因此业务类通常实现一个或多个业务接口。 
+% 当需要增强未在接口上声明的方法或需要将代理对象作为具体类型传递给方法的情况下（在极少数情况下），
+% 可以强制使用CGLIB。
+
+% 掌握Spring AOP是基于代理实现的这一事实是非常重要。 
+% 要了解具体实现细节，请参阅了解AOP代理。
