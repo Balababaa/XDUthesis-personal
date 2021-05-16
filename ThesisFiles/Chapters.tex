@@ -308,7 +308,7 @@ id属性可以精确指定一个id。
     \includegraphics[width=1\linewidth]{./Figure/IMG_code_13.png}
 \end{figure}
 
-\section{Bean 实例化}
+\subsection{Bean 实例化}
 Bean定义本质上是创建一个或多个对象的基础数据。 
 当bean被需要时，容器将查找对应的bean定义，
 并使用该bean定义封装的配置元数据来创建（或获取）实际对象。
@@ -623,7 +623,7 @@ idref元素只是将容器中另一个bean的id(字符串值——而不是引�
 是在ProxyFactoryBean bean定义中的AOP拦截器配置中。在指定拦截器名称时
 使用<idref></idref>元素可以防止拼错写错误。
 
-\subsection{对其他bean(合作者)的引用}
+\subsubsection{对其他bean(合作者)的引用}
 ref元素是<constructor-arg>或</property>定义元素中的最后一个元素。
 您将一个bean的指定属性的值设置为对容器管
 理的另一个bean(合作者)的引用。被引用的bean是要设置其属性的bean的依赖
@@ -660,7 +660,7 @@ parent属性的值可以与目标bean的id属性或目标bean的name属性中的
 \end{figure}
 
 \newpage
-\subsection{内部Bean}
+\subsubsection{内部Bean}
 <property />或<constructor-arg />元素内的<bean />元素定义了一个内部bean，如以下示例所示：
 
 \begin{figure}[ht]
@@ -681,7 +681,7 @@ parent属性的值可以与目标bean的id属性或目标bean的name属性中的
 这不是常见的情况。 内部bean通常只共享其包含bean的作用域。
 
 \newpage
-\subsection{集合}
+\subsubsection{集合}
 <list />，<set />，<map />和<props />元素分别对应Java集合类型的
 List，Set，Map和Properties。 以下示例显示了如何使用它们：
 
@@ -697,7 +697,7 @@ Map 的 键和值、Set的值可以是一下几种之一：
     \includegraphics[width=1\linewidth]{./Figure/IMG_code_42.png}
 \end{figure}
 
-\subsubsection{集合合并}
+\textbf{集合合并}
 Spring容器还支持合并集合。应用程序开发人员可以定义父<list/>、<map/>、<set/>或<props/>元素，并让子<list/>、<map/>、<set/>或<props/>元素继承和重写父集合中的值。也就是说，子集合的值是合并父集合和子集合的元素的结果，子集合的元素将覆盖父集合中指定的值。
 
 这部分关于合并的内容会涉及到父子bean机制。
@@ -726,12 +726,11 @@ Spring容器还支持合并集合。应用程序开发人员可以定义父<list
 对于Map、Set和Properties集合类型，不存在排序。
 因此，对于容器内部使用的关联Map、Set和Properties实现类型下面的集合类型，没有有效的排序语义。
 
-\subsubsection{集合合并的局限性}
+\textbf{集合合并的局限性}
 不能合并不同的集合类型（如Map和List），这样会引发相应的异常。
 必须在子定义上指定merge属性，在父集合定义上指定merge属性是无效的，不会导致所需的合并。
 
-\subsubsection{强类型集合}
-
+\textbf{强类型集合}
 随着Java5中泛型类型的引入，您可以使用强类型集合。
 也就是说，可以声明一个集合类型，使得它只能包含（例如）字符串元素。
 如果使用Spring依赖关系将强类型集合注入bean，
@@ -750,7 +749,7 @@ Spring容器还支持合并集合。应用程序开发人员可以定义父<list
 因此，Spring的类型转换将各种值元素识别为Float类型，
 字符串值（9.99、2.75和3.99）被转换为实际的Float类型。
 
-\subsection{Null和空字符串值}
+\subsubsection{Null和空字符串值}
 Spring将属性等的空参数视为空字符串。以下基于XML的配置元数据片段将电子邮件属性设置为空字符串值（“”）。
 
 \begin{figure}[ht]
@@ -781,7 +780,7 @@ Spring将属性等的空参数视为空字符串。以下基于XML的配置元�
     \includegraphics[width=1\linewidth]{./Figure/IMG_code_49.png}
 \end{figure}
 
-\subsection{p-namespace的XML快捷配置}
+\subsubsection{p-namespace的XML快捷配置}
 使用p-namespace，就可以使用<bean/>标签的元素来描述
 bena的属性值（而不是嵌套的<property />元素）。
 
@@ -813,7 +812,7 @@ n john到bean jane的引用，而第二个bean定义使用p：spouse-ref =“ ja
 属性来配置，其实作用想用。 在这种情况下，spouse是属性名称，而-ref部分指示这不是
 一个直接值，而是对另一个bean的引用。
 
-\subsection{c-namespace的XML快捷配置}
+\subsubsection{c-namespace的XML快捷配置}
 
 与带有p-namespace的XML快捷方式类似，spring3.1中引入的c-namespace允许内联属性来配置构造函数参数，而不是嵌套的constructorarg元素。
 
@@ -838,7 +837,7 @@ c:namespace使用与p命名空间
 
 实际上，构造函数解析机制在匹配参数方面非常有效，因此除非您真的需要，否则我们建议在整个配置中使用名称表示法。
 
-\subsection{复合属性名}
+\subsubsection{复合属性名}
 设置bean属性时，可以使用复合或嵌套属性名，只要路径中除最终属性名以外的所有部分都不为null。考虑以下bean定义：
 
 \begin{figure}[ht]
@@ -850,6 +849,72 @@ something bean有一个fred属性，
 fred有一个bob属性，
 bob有一个sammy属性，最后sammy属性的值被设置为123。
 在构造bean之后，something的fred属性和fred的bob属性不能为null，否则将抛出NullPointerException。
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{./Figure/IMG_code_54.png}
+\end{figure}
+
+\subsection{使用 depends-on}
+如果一个bean是另一个bean的依赖项，这通常意味着一个bean被设置为另一个bean的属性。
+通常，您可以通过基于XML的配置元数据中的<ref/>元素来实现这一点。然而，有时bean之间的依赖关系不那么直接。例如，当需要触发类中的静态初始值设定项时，例如数据库驱动程序注册。depends-on属性可以显式地强制在初始化使用此元素的bean之前初始化一个或多个bean。以下示例使用depends-on属性表示对单个bean的依赖关系：
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{./Figure/IMG_code_55.png}
+\end{figure}
+
+\newpage
+要表示对多个bean的依赖关系，请提供一个bean名称列表作为dependson属性的值（逗号、空格和分号是有效的分隔符）：
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{./Figure/56.png}
+\end{figure}
+
+\subsection{懒加载Bean}
+
+默认情况下，ApplicationContext实现会在初始化过程中创建和配置所有单例bean。
+通常，这种预实例化是可取的，因为配置或周围环境中的错误是立即发现的，而不是几小时甚至几天后才发现的。当这种行为不可取时，您可以通过将bean定义标记为懒加载来防止单例bean的预实例化。延迟初始化bean告诉IoC容器在第一次请求时创建bean实例，而不是在启动时。
+
+在XML中，此行为由<bean/>元素上的lazy init属性控制，如下例所示：
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{./Figure/57.png}
+\end{figure}
+
+当上述配置被ApplicationContext使用时，当ApplicationContext启动时，懒加载bean不会被立刻实例化，而非懒加载bean会被立刻实例化。
+
+然而，当一个懒加载bean是一个非懒加载的单例bean的依赖项时，ApplicationContext会在启动时创建懒加载的bean，因为它必须满足单例bean的依赖项。懒加载的bean被注入到其他非懒加载的单例bean中。
+
+您还可以使用<beans/>元素上的default-lazy-init属性在容器级别控制延迟初始化，如下例所示：
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{./Figure/58.png}
+\end{figure}
+
+\subsection{自动装配依赖项}
+Spring容器可以自动关联依赖bean之间的关系。
+通过查找ApplicationContext内的Bean，
+可以让Spring自动为bean注入依赖（其他bean）。自动装配依赖项具有以下优点：
+
+
+\begin{itemize}
+    \item 自动关联可以显著减少指定属性或构造函数参数的需要(在这方面，本章其他地方讨论的其他机制（如bean模板）也很有价值。）
+    \item 随着对象增加，自动装配可以更新配置。
+     例如，如果您需要向类中添加依赖项，则无需修改配置即可自动满足该依赖项。 
+     因此，自动装配在开发过程中特别有用，并不需要在代码库变得更稳定时切换到显式接线的选择。
+\end{itemize}
+
+使用基于XML的配置元数据时（请参阅“依赖注入”），可以使用<bean />元素的aut
+owire属性为bean定义指定自动装配模式。 自动装配功能具有四种模式。 您
+可以为每个bean指定自动装配。 下表描述了四种自动装配模式：
+
+
+
+
 
 
 % \chapter{Spring中的面向切面编程}
