@@ -975,12 +975,12 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
 本章从功能性需求和非功能性需求两方面对系统进行了需求分析，然后介绍了系统的数据库设计、架构设计和功能设计。
 
 \chapter{系统实现与测试}
-本章将将介绍系统实现和系统测试两大部分。
+本章将介绍系统实现和系统测试两大部分。
 % \section{开发环境搭建}
 % \subsection{前端开发环境搭建}
-前端使用 Vue.js 框架进行开发，通过 yarn 和 npm 进行项目依赖管理。开发IDE使用 Visual Code。 
+前端使用 Vue.js 框架进行开发，通过 yarn 和 npm 进行项目依赖管理，开发IDE使用 Visual Code。 
 % \subsection{后端开发环境搭建}
-后端使用 Spring Boot 框架进行开发，通过 Maven 进行项目依赖管理。开发IDE使用 IDEA。 
+后端使用 Spring Boot 框架进行开发，通过 Maven 进行项目依赖管理，开发IDE使用 IDEA。 
 
 \section{前端界面实现}
 本系统采用前后端分离的开发模式，因此前端页面与后端服务是完全独立的。
@@ -1021,7 +1021,7 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
 \end{figure}
 
 用户单击个人中心可以跳转到个人中心页面；
-用户单击退出会弹出二次确认对话框，选择是后会退出登陆并跳转到登陆页面。
+用户单击退出会弹出二次确认对话框，选择“是”后会退出登陆并跳转到登陆页面。
 
 \newpage
 \subsubsection{左侧菜单栏}
@@ -1066,7 +1066,7 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.6\linewidth]{./Figure/IMG_eg_main.png}
-    \caption{一个导航实例}\label{Fig:eg_main}
+    \caption{一个导航示例}\label{Fig:eg_main}
 \end{figure}
 
 \subsubsection{搜索}
@@ -1089,7 +1089,7 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
 \end{figure}
 
 \subsubsection{列表}
-列表页面展示数据，有后端接口返回。类似的，不同的页面列表部分展示的数据也不尽相同。
+列表页面展示数据，由后端接口返回。类似的，不同的页面列表部分展示的数据也不尽相同。
 该部分展示的内容会受到搜索部分和分页部分影响。
 
 \subsubsection{分页}
@@ -1109,11 +1109,10 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=1\linewidth]{./Figure/IMG_record_eg.png}
+    \includegraphics[width=.8\linewidth]{./Figure/IMG_record_eg.png}
     \caption{实时监控播放页面}\label{Fig:record_eg}
 \end{figure}
 
-\newpage
 \subsection{监控回放播放页面}
 监控回放播放是通过 Bilibili的开源组件 flv.js 实现的。
 系统会对实时的监控视频进行录制，为了保证数据的完整性，录制视频的有效时长为1分钟，多余的部分为冗余数据。
@@ -1125,7 +1124,6 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
     \caption{监控回放播放页面}\label{Fig:file_list}
 \end{figure}
 
-\newpage
 \subsection{系统管理页面}
 系统管理页面包括用户管理、角色管理和权限管理。
 
@@ -1134,7 +1132,7 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=1\linewidth]{./Figure/IMG_user.png}
+    \includegraphics[width=.8\linewidth]{./Figure/IMG_user.png}
     \caption{用户管理页面}\label{Fig:user}
 \end{figure}
 
@@ -1142,7 +1140,7 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=1\linewidth]{./Figure/IMG_add_role.png}
+    \includegraphics[width=.8\linewidth]{./Figure/IMG_add_role.png}
     \caption{角色编辑弹窗}\label{Fig:add_role}
 \end{figure}
 
@@ -1163,6 +1161,7 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
     \caption{权限编辑弹窗}\label{Fig:add_permission}
 \end{figure}
 
+\newpage
 \subsubsection{权限管理页面}
 
 权限管理页面如图 \ref{Fig:permission} 所示，权限分为两种类型：功能权限和菜单权限。
@@ -1176,6 +1175,7 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
 
 在此页面，可以进行权限的增加操作。权限一旦被添加，就不能进行删除和修改。
 
+\newpage
 \section{后端服务实现}
 本节将介绍后端服务的实现，主要采用Spring Boot 框架开发，通过RESTful形式的HTTP 接口与前端交互。
 \subsection{图形验证码接口}
@@ -1263,7 +1263,7 @@ Character-Encoding，添加Content-Disposition的响应头。
 % %     \includegraphics[width=1\linewidth]{./Figure/IMG_seq_download.pdf}
 % %     \caption{文件下载流程图}\label{Fig:seq_download}
 % % \end{figure}
-
+\newpage
 \section{系统测试}
 本节的主要工作是对系统进行完成的测试，目的是检验系统设计是否达到需求分析的目标，各个功能是否正常使用。
 
@@ -1472,10 +1472,10 @@ MySQL&8.0.13\\
     \caption{视频文件长度示例}\label{Fig:det}
 \end{figure}
 
-\newpage
 \section{本章小结}
 本章分别从前端页面和后端服务两个角度对系统关键功能的实现进行了介绍。
-之后介绍了系统关键功能的测试过程和结果，首先说明了系统的测试环境，然后陈述了系统关键功能的测试用例和结果。
+之后对系统测试进行介绍，首先说明了系统的测试环境，然后以表格的形式介绍了
+系统关键功能的测试用例和结果。
 
 
 \chapter{总结与展望}
