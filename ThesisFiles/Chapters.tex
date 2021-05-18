@@ -21,7 +21,7 @@
 % 老百姓的私人空间也会出现监控摄像头的身影。
 对于安装在公共场所的监控摄像头，其拍摄的视频数据和音频数据都会被相关部门收集并同一管理，
 % 其产生的视频数据以及副产物会有相关部门管理，
-而这类监控摄像头设备大多是使用电子线缆进行数据传输，会受到时间和地域的双重限制。
+而这类监控摄像头设备大多是使用同轴电缆进行数据传输，会受到时间和地域的双重限制。
 % 而且这类监控设备多用电子线缆传送数据，
 % 会受到时间和地域的限制；
 但是安装在人们家中的监控摄像头就不可能做到由有关部门统一管理，
@@ -87,7 +87,7 @@
 视频监控支持移动场景。传统的视频监控摄像头大多是固定不动的，可以认为是固定在某一个静止的物体上，
 例如房屋的墙上、路灯杆上等等。在这种场景下，可以通过网络布线的方式解决监控中心与被监控点的通信。
 但是一旦遇上部署在移动物体上的监控摄像头，例如公交车、高铁等，传统的网络布线方式解决通信问题
-显然不可取，还有一种场景就是遇上了复杂地形，高山深谷、河流沙漠等等，同样有限网络也是束手无策。
+显然不可取，还有一种场景就是遇上了复杂地形，高山深谷、河流沙漠等等，同样有线网络也是束手无策。
 这个时候支持移动网络的监控摄像头就显得尤为重要，3G、4G、5G等移动网络技术的出现，使得视频监控
 支持移动场景变得更加简单\cite{雷俊智2008移动视频监控技术应用研究}。
 
@@ -107,7 +107,7 @@
 % 摄像头厂商B的摄像头需要在平台B上进行查看，
 每个厂商都有自己的协议和平台，这就会产生设备兼容性问题。
 % 公司A需要在它自家的平台上才能看到队友监控视频，公司B也是如此。
-这就需要制定一个统一个标准（如onvif协议\cite{陈少尉2014基于}），然后所有的厂商按照这个标准去生产摄像头和研发监控摄像头系统。
+这就需要制定一个统一个标准（如onvif协议\cite{陈少尉2014基于}），然后每个厂商按照这个标准去生产摄像头和研发监控摄像头系统。
 
 % 这是因为现在的网络视频监控还没有一个统一个标准，做不到兼容所有的厂家，
 % 或者说是每个厂家的生产都没有一个统一标准。
@@ -172,10 +172,10 @@
 
 % 最后介绍了RABC权限系统的概念以及设计思路。
 
-第三章从功能性需求和非功能性需求两方面对系统进行了需求分析，然后介绍了系统的数据库设计和系统架构设计。
+第三章从功能性需求和非功能性需求两方面对系统进行了需求分析，然后介绍了系统的数据库设计、架构设计和功能设计。
 
 第四章分别从前端页面和后端服务两个角度对系统关键功能的实现进行了介绍。
-之后介绍了系统关键功能的测试过程和结果，首先说明了系统的测试环境，然后以表格的形式介绍了
+之后对系统测试进行介绍，首先说明了系统的测试环境，然后以表格的形式介绍了
 系统关键功能的测试用例和结果。
 
 
@@ -192,7 +192,7 @@ HLS。
 在对这三个协议个优势和劣势进行调研比较之后，决定采用
 HTTP-FLV 来实现摄像头实时视频的传输和播放。
 
-\subsection{流媒体以及流式传输}
+\subsection{流媒体与流式传输}
 \subsubsection{流媒体}
 流媒体 (Streaming Media) 是在网络上将压缩的多媒体数据流进行传输的技术, 然后用户将压缩包进行解压后就能播放数据流\cite{万梅芬2018基于流媒体技术的数字化校园文化设计与实现}。
 它能将一连串的媒体数据（包含音频、视频数据）压缩后并采用流式传输的方式发送。
@@ -225,7 +225,7 @@ HTTP-FLV 来实现摄像头实时视频的传输和播放。
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.8\linewidth]{./Figure/IMG_server.pdf}
+    \includegraphics[width=.9\linewidth]{./Figure/IMG_server.pdf}
     \caption{流式传输示意图}
     \label{Fig:server}
 \end{figure}
@@ -354,7 +354,7 @@ FLV Tag 中的前四个字节用来表示前一个Tag 的长度，即图 \ref{Fi
 HLS协议是由苹果公司在2009年提出的基于HTTP的流媒体传输协议，主要应用于PC端和苹果终端，
 可以提供近似实时的流媒体服务，苹果公司在iPhone3.0中首次尝试了该技术\cite{魏雪飞2020HLS,曾清0基于}。
 
-HLS协议的原理是将输入的是流切分成若干个小的文件，然后通过一个索引文件将它们串联起来。
+HLS协议的原理是将输入的流切分成若干个小的文件，然后通过一个索引文件将它们串联起来。
 播放器需要播放时，会先请求索引文件，再根据索引文件从文件服务器上获对应的音视频等多媒体文件。
 其工作原理如图 \ref{Fig:hls} 所示。
 
@@ -366,7 +366,7 @@ HLS协议的原理是将输入的是流切分成若干个小的文件，然后�
     \label{Fig:hls}
 \end{figure}
 
-在图  \ref{Fig:hls} 中，音视频输入设备产生的数据经过 Media encoder 编码后发送到 Stream segmenter 
+在图  \ref{Fig:hls} 中，音视频输入设备产生的数据流经过 Media encoder 编码后发送到 Stream segmenter 
 进行切分操作。
 完成切分操作之后，会产生索引文件和对应的多媒体文件，即图中的index file 和 .ts 文件。
 之后客户端可以通过HTTP请求的方式获取索引文件和多媒体文件进行播放。
@@ -406,7 +406,7 @@ HLS协议的原理是将输入的是流切分成若干个小的文件，然后�
 
 
 \subsection{RTMP、 HTTP-FLV、 HLS简单对比}
-表 \ref{Tab:pcompare} 对RTMP、 HTTP-FLV、 HLS这三种协议在底层传输协议、延迟、使用场景等方面进行了对比。
+表 \ref{Tab:pcompare} 对RTMP、 HTTP-FLV、 HLS这三种协议在底层传输协议、视频封装格式、延时等方面进行了对比。
 
 % \begin{table}[ht]
 % \centering
@@ -427,7 +427,7 @@ HLS协议的原理是将输入的是流切分成若干个小的文件，然后�
 \caption{RTMP、 HTTP-FLV、 HLS对比\cite{RTMP、HTTP-FLV、HLS，你了解常见的三大直播协议吗}}
 \label{Tab:pcompare}\\
 \hline
-协议&底层传输协议&视频封装格式&延迟&数据分段&HTML5\\
+协议&底层传输协议&视频封装格式&延时&数据分段&HTML5\\
 \hline
 RTMP&TCP&flv tag&2秒&连续流&不支持\\
 \hline
@@ -458,10 +458,8 @@ Spring Boot框架由Pivotal团队开发，它通过“自动装配”的方式�
 % Spring Boot是由Pivotal团队提供的全新框架，
 % 其设计目的是用来简化新Spring应用的初始搭建以及开发过程。
 % 该框架使用了特定的方式来进行配置，从而使开发人员不再需要定义样板化的配置。
-
-
 % Spring Boot不仅继承了Spring框架原有的优秀特性，而且还通过简化配置来进一步简化了Spring应用的整个搭建和开发过程。
-在Spring Boot出现之前，使用Spring框架进行应用开发需要编写繁琐的配置文件，然而这些配置文件的内容大多都是类似的。
+% 在Spring Boot出现之前，使用Spring框架进行应用开发需要编写繁琐的配置文件，然而这些配置文件的内容大多都是类似的。
 
 如图 \ref{Fig:spring} 所示，Spring框架约由20个模块组成，它们被分成
 Core Container（核心容器）、
@@ -524,18 +522,17 @@ Spring容器就可以将通过这种方式声明的被依赖对象从容器中�
 在Spring框架中，AOP是最重要的组成部分之一。在AOP中，有一下几个重要的概念：
 \begin{enumerate}
     \item 连接点（Join point）：程序执行过程中的一个时间点，例如方法执行、异常处理、变量赋值等等。
-    在Spring AOP 中，只能是方法执行。
+    在Spring AOP 中，它只能是方法执行。
     \item 增强（Advice）：在某个特定的连接点上执行的一段额外逻辑。
     可以是在连接点之前、之后或者环绕执行。在多数的AOP框架中，
-    是通过拦截器（Interceptor）来实现的，并维护者一个拦截器链。
+    是通过拦截器（Interceptor）来实现的，并维护着一个拦截器链。
     \item 切点（Pointcut）：是一个谓词表达式，用来计算是否匹配这个连接点。
     对于方法执行的连接点，切点可以是“当参数为某一指定值”。
     \item 切面（Apsect）：切面是切点和增强的组合。
 \end{enumerate}
 
-在程序执行的过程中，有若干个连接点，每个连接点都可以成为Aspect的目标。
-
-AOP的最终目标就是在程序运行的某一个时间点，可以执行一段额外的逻辑。图 \ref{Fig:aop} 
+在程序执行的过程中，有若干个连接点，每个连接点都可以成为切面的目标。
+AOP的最终目标就是在程序运行的某一个时间点执行一段额外的逻辑。图 \ref{Fig:aop} 
 简单描述了AOP的原理和执行过程。
 在图 \ref{Fig:aop} 中，切面（Aspect）对应的连接点（Join point）为$Join\ point\ N$，
 切点（Pointcut）的谓词表达式为$ pointcut\ ==\ Join\ point\ N$
@@ -543,7 +540,7 @@ AOP的最终目标就是在程序运行的某一个时间点，可以执行一�
 
 \begin{figure}[ht]
     \centering   
-    \includegraphics[width=.8\linewidth]{./Figure/IMG_aop.pdf}
+    \includegraphics[width=1\linewidth]{./Figure/IMG_aop.pdf}
     \caption{AOP原理示意图}\label{Fig:aop}
 \end{figure}
 
@@ -767,7 +764,7 @@ MySQL是关系型数据库，需要先通过E-R图来展示系统之间各个实
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.8\linewidth]{./Figure/IMG_er.pdf}
+    \includegraphics[width=1\linewidth]{./Figure/IMG_er.pdf}
     \caption{实体关系图}\label{Fig:erd}
 \end{figure}
 
@@ -835,8 +832,6 @@ HTTP请求工具类封装了HTTP请求中相关的GET、POST两种请求方法�
 Spring工具类提供了对Spring上下文的ApplicationContext的静态访问，
 可以在全局状态下任何一个地方访问上下文，即可以访问容器内管理的对象和使用Spring提供的观察者模式。
 
-
-\newpage
 登陆验证码工具类主要提供在登录时生产验证码图片，如图 \ref{Fig:code} 所示。
 
 \begin{figure}[ht]
@@ -877,7 +872,7 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
 
 \subsection{视频文件存取模块}
 视频文件存取模块（monitoring-system-media）提供实时监控视频录制和离线查看检索功能。
-该模块提供了两个HTTP的接口，分别是监控回放文件的列表查询接口和监控回放文件下载接口。
+该模块提供文件相关的HTTP接口，分别是监控回放文件的列表查询接口和监控回放文件下载接口。
 对于已经在本系统中绑定的监控摄像头设备，每隔一分钟视频文件存取模块会执行定时任务，
 对该设备进行录制，并且录制的时长为80秒，目的是做到前后视频文件能有重合部分，防止视频数据丢失。
 
@@ -891,7 +886,7 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
 
 \subsection{前端接口交互模块}
 前端接口交互模块（monitoring-system-web）提供与前端交互的能力。
-该模块负责接受前端的请求，然后调用下层模块（如视频文件存取模块）提供的接口方法，实现业务逻辑，
+该模块负责接收前端的请求，然后调用下层模块（如视频文件存取模块）提供的接口方法，完成业务逻辑，
 然后将下层模块的返回值进行一定程度的封装后返回给前端进行展示。
 
 
@@ -911,7 +906,7 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
 
 
 \subsubsection{图形验证码}
-图形验证码的作用是过滤无效的请求非认为请求，防止爬虫。
+图形验证码的作用是过滤无效的请求，防止爬虫。
 图形验证码接口时序图如图 \ref{Fig:code_seq} 所示。
 
 \begin{figure}[ht]
@@ -951,10 +946,9 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
 
 监控视频保存的时序图如图 \ref{Fig:video_save} 所示。
 
-\newpage
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=.9\linewidth]{./Figure/IMG_video_save.pdf}
+    \includegraphics[width=1\linewidth]{./Figure/IMG_video_save.pdf}
     \caption{监控视频保存流程图}\label{Fig:video_save}
 \end{figure}
 
@@ -966,7 +960,7 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=.8\linewidth]{./Figure/IMG_seq_upload.pdf}
+    \includegraphics[width=.7\linewidth]{./Figure/IMG_seq_upload.pdf}
     \caption{文件上传流程图}\label{Fig:seq_upload}
 \end{figure}
 
@@ -978,7 +972,7 @@ Spring工具类提供了对Spring上下文的ApplicationContext的静态访问�
 
 
 \section{本章小结}
-本章从功能性需求和非功能性需求两方面对系统进行了需求分析，然后介绍了系统的数据库设计和系统架构设计。
+本章从功能性需求和非功能性需求两方面对系统进行了需求分析，然后介绍了系统的数据库设计、架构设计和功能设计。
 
 \chapter{系统实现与测试}
 本章将将介绍系统实现和系统测试两大部分。
